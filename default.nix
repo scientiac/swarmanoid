@@ -22,6 +22,7 @@ with import <nixpkgs> {};
         with ps; [
           opencv4
           numpy
+          networkx
         ])
   )
   .env

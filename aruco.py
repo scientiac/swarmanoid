@@ -3,6 +3,7 @@
 import cv2
 import cv2.aruco as aruco
 import numpy as np
+import networkx as nx
 
 # Define the dictionaries to try
 
@@ -33,14 +34,21 @@ import numpy as np
 
 
 dictionaries_to_try = [
-    cv2.aruco.DICT_4X4_50,
-    cv2.aruco.DICT_4X4_100,
-    cv2.aruco.DICT_4X4_250,
-    cv2.aruco.DICT_4X4_1000,
+    cv2.aruco.DICT_6X6_250,
 ]
 
 # Initialize the camera
 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+
+# Define marker IDs for pathfinding
+start_id = 1
+end_id = 2
+
+# Create a graph to represent marker connections
+graph = nx.Graph()
+
+# Define boundary marker IDs
+boundary_marker_ids = {8, 7, 9, 10}
 
 while True:
     # Capture frame-by-frame
@@ -62,36 +70,87 @@ while True:
         # Detect ArUco markers
         corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, dictionary)
 
-        # Draw the markers on the frame
         if ids is not None:
             aruco.drawDetectedMarkers(frame, corners, ids)
 
-            # Estimate the pose of the markers
-            retval, charucoCorners, charucoIds = aruco.interpolateCornersCharuco(
-                corners, ids, gray, board
-            )
+            # Update the graph with marker connections
+            if (
+                len(ids) >= 3
+            ):  # Only update the graph if three or more markers are detected
+                # Clear the graph before updating with new connections
+                graph.clear()
 
-            if retval > 0:
-                aruco.drawDetectedCornersCharuco(frame, charucoCorners, charucoIds)
+                # Add boundary markers to the graph
+                for boundary_id in boundary_marker_ids:
+                    if boundary_id in ids.flatten():
+                        graph.add_node(boundary_id)
 
-                # Estimate the pose of the board
-                _, rvec, tvec = aruco.estimatePoseCharucoBoard(
-                    charucoCorners,
-                    charucoIds,
-                    board,
-                    cameraMatrix=None,
-                    distCoeffs=None,
-                )
+                # Connect boundary markers with lines from their centers
+                for i in range(len(boundary_marker_ids)):
+                    start_id = list(boundary_marker_ids)[i]
+                    end_id = list(boundary_marker_ids)[
+                        (i + 1) % len(boundary_marker_ids)
+                    ]
+                    if start_id in ids.flatten() and end_id in ids.flatten():
+                        start_center = np.mean(
+                            corners[ids.flatten().tolist().index(start_id)][0], axis=0
+                        )
+                        end_center = np.mean(
+                            corners[ids.flatten().tolist().index(end_id)][0], axis=0
+                        )
+                        start_center = tuple(map(int, start_center))
+                        end_center = tuple(map(int, end_center))
+                        cv2.line(frame, start_center, end_center, (0, 0, 255), 2)
 
-                # Draw the pose information
-                aruco.drawAxis(
-                    frame,
-                    cameraMatrix=None,
-                    distCoeffs=None,
-                    rvec=rvec,
-                    tvec=tvec,
-                    length=0.1,
-                )
+                for i in range(len(ids)):
+                    for j in range(i + 1, len(ids)):
+                        # Avoid adding connections for markers with ID 0
+                        if ids[i][0] != 0 and ids[j][0] != 0:
+                            # Avoid crossing the boundary
+                            if (
+                                ids[i][0] not in boundary_marker_ids
+                                or ids[j][0] not in boundary_marker_ids
+                            ):
+                                graph.add_edge(ids[i][0], ids[j][0])
+
+                # Check if the start and end markers are in the graph
+                if start_id in graph.nodes() and end_id in graph.nodes():
+                    try:
+                        # Find the shortest path avoiding markers with ID 0 and crossing the boundary
+                        path = nx.shortest_path(graph, source=start_id, target=end_id)
+
+                        # Print the path
+                        print("Shortest path:", path)
+
+                        # Draw the path on the frame
+                        for i in range(len(path) - 1):
+                            try:
+                                start_center = np.mean(
+                                    corners[ids.flatten().tolist().index(path[i])][0],
+                                    axis=0,
+                                )
+                                end_center = np.mean(
+                                    corners[ids.flatten().tolist().index(path[i + 1])][
+                                        0
+                                    ],
+                                    axis=0,
+                                )
+                                start_center = tuple(map(int, start_center))
+                                end_center = tuple(map(int, end_center))
+                                cv2.line(
+                                    frame, start_center, end_center, (0, 255, 0), 2
+                                )
+                            except ValueError:
+                                # Handle the case when the marker is not found in the list
+                                pass
+                    except nx.NetworkXNoPath:
+                        print(
+                            "No path found between {} and {}".format(start_id, end_id)
+                        )
+                else:
+                    print("Start or end marker not detected.")
+            else:
+                print("Less than three markers detected. Not updating the graph.")
 
     # Display the frame
     # cv2.imshow("ArUco Marker Detection", cv2.flip(frame, 1))
