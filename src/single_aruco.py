@@ -49,7 +49,7 @@ while True:
     if ids is not None and len(ids) > 0:
         aruco.drawDetectedMarkers(frame, corners, ids)
         for i, corner in enumerate(corners):
-            print(f"Marker {ids[i]} coordinates: {corner}")
+            print(f"Marker {ids[i]} \ncoordinates: \n{corner}")
 
             # Convert corners to int, as they are returned as float
             corner = corner.astype(int)
