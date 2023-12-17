@@ -3,12 +3,21 @@
 import cv2
 import cv2.aruco as aruco
 import numpy as np
+import platform
 
 # Define the dictionary to use
 dictionary_to_use = cv2.aruco.DICT_6X6_250
 
 # Initialize the camera
-cap = cv2.VideoCapture(0)
+# Handle the case where the operating system is neither Linux nor Windows
+if platform.system() == 'Linux':
+    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+elif platform.system() == 'Windows':
+    cap = cv2.VideoCapture(0)
+else:
+    print("Unsupported operating system.")
+
+#Font to display
 font = cv2.FONT_HERSHEY_COMPLEX
 
 while True:
@@ -41,18 +50,18 @@ while True:
         aruco.drawDetectedMarkers(frame, corners, ids)
         for i, corner in enumerate(corners):
             print(f"Marker {ids[i]} coordinates: {corner}")
-            
-        # Convert corners to int, as they are returned as float
-        corner = corner.astype(int)
+                
+            # Convert corners to int, as they are returned as float
+            corner = corner.astype(int)
 
-        # Draw boundary of ArUco marker
-        cv2.polylines(frame, [corner[0]], True, (0, 0, 255), 5)
+            # Draw boundary of ArUco marker
+            cv2.polylines(frame, [corner[0]], True, (0, 0, 255), 1)
 
-        # Draw coordinates of ArUco marker
-        for point in corner[0]:
-            x, y = point
-            string = str(x) + " " + str(y)
-            cv2.putText(frame, string, (x, y), font, 0.5, (0, 255, 0))
+            # Draw coordinates of ArUco marker
+            for point in corner[0]:
+                x, y = point
+                string = str(x) + " " + str(y)
+                cv2.putText(frame, string, (x, y), font, 0.5, (0, 255, 0))
 
     # Display the frame
     cv2.imshow("ArUco Marker Detection", frame)
