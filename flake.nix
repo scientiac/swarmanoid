@@ -30,9 +30,15 @@
         numpy
         networkx
       ]);
+
+    dependencies = with pkgs; [
+      # Micropython Dependencies
+      esptool
+      screen
+    ];
   in {
     devShells.${system}.default = pkgs.mkShell {
-      buildInputs = [pythonEnv];
+      buildInputs = [pythonEnv] ++ dependencies;
     };
   };
 }
