@@ -10,9 +10,7 @@ If you are not using `nixOS`:
 1. First install the nix package manager from the link below:
 (It should be as easy as pasting the command and following the script.)
 
-```
 https://nixos.org/download
-```
 
 2. Run the given script `enable-flakes-non-nixos.sh` with superuser permissions:
 
@@ -68,3 +66,5 @@ https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
 | RX    | GPIO3  | OK            | RX pin                | HIGH at boot                                                    |
 | TX    | GPIO1  | TX pin        | OK                    | HIGH at bootdebug output at boot, boot fails if pulled LOW      |
 | A0    | ADC0   | Analog Input  | X                     |
+
+[esp8266 Pinout Reference](https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/)
