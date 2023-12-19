@@ -9,7 +9,7 @@ dictionary_to_use = cv2.aruco.DICT_6X6_250
 # Initialize the camera
 # Handle the case where the operating system is neither Linux nor Windows
 if platform.system() == "Linux":
-    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+    cap = cv2.VideoCapture(2, cv2.CAP_V4L2)
 elif platform.system() == "Windows":
     cap = cv2.VideoCapture(0)
 else:
