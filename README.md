@@ -28,3 +28,39 @@ sudo ./enable-flakes-non-nixos.sh
 > Note: Since, the development is done in the nix environment you should enter the environment each time running `nix develop` if you exit or closed the terminal.
 
 > using `flake.nix` to add the dependencies and environment variable is highly recommended.
+
+# Setting up esp8266
+https://micropython.org/download/ESP8266_GENERIC/
+
+Using esptool.py you can erase the flash with the command:
+```
+esptool.py --port /dev/ttyUSB0 erase_flash
+```
+And then deploy the new firmware using:
+```
+esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 ./resources/ESP8266_GENERIC-20231005-v1.21.0.bin
+```
+
+## Connecting to the USB serial repl.
+```
+screen /dev/ttyUSB0 115200
+```
+
+## Connecting to the webrepl.
+https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
+[Pin Diagram](./resources/ESP8266-NodeMCU.webp)
+
+| Label | GPIO   | Input         | Output                | Notes                                                           |
+|-------|--------|---------------|-----------------------|-----------------------------------------------------------------|
+| D0    | GPIO16 | no interrupt  | no PWM or I2C support | HIGH at bootused to wake up from deep sleep                     |
+| D1    | GPIO5  | OK            | OK                    | often used as SCL (I2C)                                         |
+| D2    | GPIO4  | OK            | OK                    | often used as SDA (I2C)                                         |
+| D3    | GPIO0  | pulled up     | OK                    | connected to FLASH button, boot fails if pulled LOW             |
+| D4    | GPIO2  | pulled up     | OK                    | HIGH at bootconnected to on-board LED, boot fails if pulled LOW |
+| D5    | GPIO14 | OK            | OK                    | SPI (SCLK)                                                      |
+| D6    | GPIO12 | OK            | OK                    | SPI (MISO)                                                      |
+| D7    | GPIO13 | OK            | OK                    | SPI (MOSI)                                                      |
+| D8    | GPIO15 | pulled to GND | OK                    | SPI (CS)Boot fails if pulled HIGH                               |
+| RX    | GPIO3  | OK            | RX pin                | HIGH at boot                                                    |
+| TX    | GPIO1  | TX pin        | OK                    | HIGH at bootdebug output at boot, boot fails if pulled LOW      |
+| A0    | ADC0   | Analog Input  | X                     |
