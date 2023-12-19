@@ -49,6 +49,7 @@ screen /dev/ttyUSB0 115200
 ## Connecting to the webrepl.
 https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
 
+## NodeMCU v3 pins and IO
 ![Pin Diagram](resources/ESP8266-NodeMCU.png)
 
 | Label | GPIO   | Input         | Output                | Notes                                                           |
