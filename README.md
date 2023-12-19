@@ -38,15 +38,17 @@ esptool.py --port /dev/ttyUSB0 erase_flash
 ```
 And then deploy the new firmware using:
 ```
+# the following command flashes the firmware that I am using from the resources directory in of my repo.
+# you might want to flash the latest firmware by downloading it from the link given above.
 esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 ./resources/ESP8266_GENERIC-20231005-v1.21.0.bin
 ```
 
-## Connecting to the USB serial repl.
+## Connecting to the USB serial repl
 ```
 screen /dev/ttyUSB0 115200
 ```
 
-## Connecting to the webrepl.
+## Connecting to the webrepl
 https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
 
 ## NodeMCU v3 pins and IO
