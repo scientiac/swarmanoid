@@ -68,10 +68,13 @@ elif platform.system() == "Windows":
 if cap is None or not cap.isOpened():
     cap = cv2.VideoCapture(url)
     if not cap.isOpened():
-        print(
-            "No live stream found. Ensure that you have selected the correct camera or provided a valid URL."
-        )
-        exit()
+        if platform.system() == "Linux":
+            cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+        elif platform.system() == "Windows":
+            cap = cv2.VideoCapture(0)
+        else:
+            print("No Supported Platform Found")
+
 
 # Font to display
 font = cv2.FONT_HERSHEY_COMPLEX
