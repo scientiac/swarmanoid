@@ -6,14 +6,39 @@ import platform
 # Define the dictionary to use
 dictionary_to_use = cv2.aruco.DICT_6X6_250
 
+url = "http://192.168.1.105:4747/video"
+
 # Initialize the camera
-# Handle the case where the operating system is neither Linux nor Windows
+cap = None
+
 if platform.system() == "Linux":
-    cap = cv2.VideoCapture(2, cv2.CAP_V4L2)
+    # Try camera indices
+    for i in range(1, 3):
+        cap = cv2.VideoCapture(i, cv2.CAP_V4L2)
+        if cap.isOpened():
+            print(f"Opened camera at index {i} using V4L2.")
+            break
+    else:
+        print("No live stream found using camera indices. Trying URL...")
+
 elif platform.system() == "Windows":
-    cap = cv2.VideoCapture(0)
-else:
-    print("Unsupported operating system.")
+    # Try camera indices
+    for i in range(1, 3):
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            print(f"Opened camera at index {i}.")
+            break
+    else:
+        print("No live stream found using camera indices. Trying URL...")
+
+# If camera is still not opened, try using the URL
+if cap is None or not cap.isOpened():
+    cap = cv2.VideoCapture(url)
+    if not cap.isOpened():
+        print(
+            "No live stream found. Ensure that you have selected the correct camera or provided a valid URL."
+        )
+        exit()
 
 # Font to display
 font = cv2.FONT_HERSHEY_COMPLEX
