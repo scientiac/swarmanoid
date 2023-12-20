@@ -38,7 +38,7 @@
     ];
 
     shellHook = ''
-      alias run="cd ${self} && ./main.py && cd -"
+      alias run="python ${self}/main.py"
     '';
   in {
     devShells.${system}.default = pkgs.mkShell {
