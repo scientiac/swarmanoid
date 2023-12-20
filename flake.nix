@@ -36,9 +36,14 @@
       esptool
       screen
     ];
+
+    shellHook = ''
+      alias run="cd ${self} && ./main.py && cd -"
+    '';
   in {
     devShells.${system}.default = pkgs.mkShell {
       buildInputs = [pythonEnv] ++ dependencies;
+      shellHook = shellHook;
     };
   };
 }
