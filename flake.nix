@@ -47,6 +47,7 @@
             alias repl="screen /dev/ttyUSB0 115200"
             alias push="ampy -p /dev/ttyUSB0 put"
             alias switch='./etc/change-values.sh'
+            echo "Type 'help' to get help!"
 
       function help(){
             echo "
