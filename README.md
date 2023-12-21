@@ -48,6 +48,8 @@ esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect --f
 screen /dev/ttyUSB0 115200
 ```
 
+> Also checkout [CHEATSHEET](micropython/CHEATSHEET.md) for setting up essentials.
+
 ## Connecting to the webrepl
 https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
 
