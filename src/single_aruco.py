@@ -7,7 +7,7 @@ import platform
 import paho.mqtt.publish as publish
 import time
 
-broker_address = "192.168.35.190"
+broker_address = "192.168.1.80"
 led_topic = "led"
 led_topic2 = "led2"
 # Mqtt  end
