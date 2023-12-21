@@ -41,13 +41,29 @@
     ];
 
     shellHook = ''
-      alias run="python ./main.py"
-      # mosquitto -c resources/mosquitto.conf &
-      screen -S mqtt-session -dm mosquitto -c resources/mosquitto.conf
-      alias show="screen -r mqtt-session"
+            alias run="python ./main.py"
+            # mosquitto -c resources/mosquitto.conf &
+            screen -S mqtt-session -dm mosquitto -c resources/mosquitto.conf
+            alias show="screen -r mqtt-session"
+            alias repl="screen /dev/ttyUSB0 115200"
+            alias push="ampy -p /dev/ttyUSB0 put"
 
-      echo "Type 'show' to see the mosquitto logs and 'ctrl+a+d' to hide it"
-      echo "Type 'run' and 'run -m' for detection and 'run -q' for mqtt"
+      function help(){
+            echo "
+      show - to see the mosquitto logs
+             press [ctrl+a+d] to hide
+
+      run  - to run the main script
+             [-m or --multiple] to detect multiple kind of markers
+             [-q or --mqtt]     to run a test mqtt python server
+
+      repl - to enter the micropython repl
+             press [ctrl+a+k] and hit y to exit
+
+      push - to sent it to the client
+             eg: push main.py
+            "
+      }
     '';
   in {
     devShells.${system}.default = pkgs.mkShell {
