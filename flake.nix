@@ -43,25 +43,28 @@
     shellHook = ''
             alias run="python ./main.py"
             # mosquitto -c resources/mosquitto.conf &
-            screen -S mqtt-session -dm mosquitto -c resources/mosquitto.conf
+            screen -S mqtt-session -dm mosquitto -c etc/mosquitto.conf
             alias show="screen -r mqtt-session"
             alias repl="screen /dev/ttyUSB0 115200"
             alias push="ampy -p /dev/ttyUSB0 put"
+            alias switch='./etc/change-values.sh'
 
       function help(){
             echo "
-      show - to see the mosquitto logs
-             press [ctrl+a+d] to hide
+      show   - to see the mosquitto logs
+                press [ctrl+a+d] to hide
 
-      run  - to run the main script
-             [-m or --multiple] to detect multiple kind of markers
-             [-q or --mqtt]     to run a test mqtt python server
+      run    - to run the main script
+                [-m or --multiple] to detect multiple kind of markers
+                [-q or --mqtt]     to run a test mqtt python server
 
-      repl - to enter the micropython repl
-             press [ctrl+a+k] and hit y to exit
+      repl   - to enter the micropython repl
+                press [ctrl+a+k] and hit y to exit
 
-      push - to sent it to the client
-             eg: push main.py
+      push   - to sent it to the client
+                eg: push main.py
+
+      switch - to switch values of wifi and broker address and push
             "
       }
     '';
