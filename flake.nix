@@ -42,7 +42,6 @@
 
     shellHook = ''
             alias run="python ./main.py"
-            # mosquitto -c resources/mosquitto.conf &
             screen -S mqtt-session -dm mosquitto -c etc/mosquitto.conf
             alias show="screen -r mqtt-session"
             alias repl="screen /dev/ttyUSB0 115200"
