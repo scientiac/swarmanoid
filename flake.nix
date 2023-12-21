@@ -29,16 +29,25 @@
         opencv4
         numpy
         networkx
+        paho-mqtt
       ]);
 
     dependencies = with pkgs; [
       # Micropython Dependencies
       esptool
       screen
+      adafruit-ampy
+      mosquitto
     ];
 
     shellHook = ''
-      alias run="python ${self}/main.py"
+      alias run="python ./main.py"
+      # mosquitto -c resources/mosquitto.conf &
+      screen -S mqtt-session -dm mosquitto -c resources/mosquitto.conf
+      alias show="screen -r mqtt-session"
+
+      echo "Type 'show' to see the mosquitto logs and 'ctrl+a+d' to hide it"
+      echo "Type 'run' and 'run -m' for detection and 'run -q' for mqtt"
     '';
   in {
     devShells.${system}.default = pkgs.mkShell {

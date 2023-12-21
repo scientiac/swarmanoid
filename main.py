@@ -16,6 +16,12 @@ def run_multi_aruco():
     subprocess.run(["python", multi_aruco_file])
 
 
+def run_mqtt():
+    # Specify the path to multi_aruco.py
+    mqtt_file = "./src/mqtt_server.py"
+    subprocess.run(["python", mqtt_file])
+
+
 def main():
     if len(sys.argv) == 1:
         # Run single_aruco.py for the default case
@@ -23,6 +29,9 @@ def main():
     elif len(sys.argv) == 2 and (sys.argv[1] == "--multiple" or sys.argv[1] == "-m"):
         # Run multi_aruco.py for the --multiple or -m option
         run_multi_aruco()
+    elif len(sys.argv) == 2 and (sys.argv[1] == "--mqtt" or sys.argv[1] == "-q"):
+        # Run multi_aruco.py for the --multiple or -m option
+        run_mqtt()
     else:
         print("Invalid command. Usage: ./main.py [--multiple|-m]")
 
