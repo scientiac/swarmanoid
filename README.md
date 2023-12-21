@@ -16,7 +16,7 @@ https://nixos.org/download
 
 ```
 # With great power comes great responsibilities.
-sudo ./enable-flakes-non-nixos.sh
+sudo ./etc/enable-flakes-non-nixos.sh
 ```
 
 3. Run `nix develop`. For the first time it will take some time to install `opencv`, because it should be compiled manually with the `enableGTK2` flag to displaying windows using the `opencv` library itself. The environment will be loaded instantly upon running `nix develop` the next time.
@@ -38,9 +38,9 @@ And then deploy the new firmware using:
 ```
 # the following command flashes the firmware that I am using from the resources directory in of my repo.
 # you might want to flash the latest firmware by downloading it from the link given above.
-esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 ./resources/ESP8266_GENERIC-20231005-v1.21.0.bin
+esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 ./etc/ESP8266_GENERIC-20231005-v1.21.0.bin
 # if you cant access the repl
-esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect --flash_mode dout 0 ./resources/ESP8266_GENERIC-20231005-v1.21.0.bin
+esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect --flash_mode dout 0 ./etc/ESP8266_GENERIC-20231005-v1.21.0.bin
 ```
 
 ## Connecting to the USB serial repl
