@@ -3,11 +3,20 @@ import cv2.aruco as aruco
 import numpy as np
 import platform
 
+# Mqtt
+import paho.mqtt.publish as publish
+import time
+
+broker_address = "192.168.35.190"
+led_topic = "led"
+led_topic2 = "led2"
+# Mqtt  end
+
 # Define the dictionary to use
 dictionary_to_use = cv2.aruco.DICT_6X6_250
 
 # setting the url for ipcam
-url = "http://192.168.1.105:4747/video"
+url = "http://192.168.1.30:4747/video"
 
 # Initialize the camera
 cap = None
@@ -90,6 +99,20 @@ while True:
                 x, y = point
                 string = str(x) + " " + str(y)
                 cv2.putText(frame, string, (x, y), font, 0.5, (255, 0, 0))
+
+            # Mqtt
+            if 2 in ids:
+                publish.single(led_topic, "onn", hostname=broker_address)
+
+            if 3 in ids:
+                publish.single(led_topic2, "on", hostname=broker_address)
+
+            if 4 in ids:
+                publish.single(led_topic, "offf", hostname=broker_address)
+
+            if 5 in ids:
+                publish.single(led_topic2, "off", hostname=broker_address)
+            # Mqtt end
 
     # Display the frame
     cv2.imshow("ArUco Marker Detection", frame)
