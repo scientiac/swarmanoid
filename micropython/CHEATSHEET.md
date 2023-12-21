@@ -25,4 +25,11 @@ import machine
 pin = machine.Pin(15, machine.Pin.OUT)
 pin.on()
 ```
+5. To change esp ip wifi ssid and password
+```
+import network
 
+ap = network.WLAN(network.AP_IF)
+ap.active(True)
+ap.config(essid="new_ap_ssid", password="new_ap_password")
+```
