@@ -11,8 +11,8 @@ import time
 import machine
 
 # Wi-Fi configuration
-ssid = "stuti_dhrn_2.4"
-password = "stuti@linux@dhrn"
+ssid = "scientiac"
+password = "hehehehe"
 
 
 # Function to connect to Wi-Fi
@@ -23,6 +23,7 @@ def connect_wifi():
     if not wlan.isconnected():
         print("Connecting to WiFi...")
         wlan.connect(ssid, password)
+        # wlan.connect(ssid)
 
         while not wlan.isconnected():
             time.sleep(1)
@@ -37,6 +38,8 @@ connect_wifi()
 if network.WLAN(network.STA_IF).isconnected():
     # Execute mqtt.py
     try:
+        # import mqtt2  # Replace 'mqtt' with the actual name of your Python script
+
         import mqtt  # Replace 'mqtt' with the actual name of your Python script
     except Exception as e:
         print("Error executing mqtt.py:", e)
