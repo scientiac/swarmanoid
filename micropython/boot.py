@@ -11,8 +11,8 @@ import time
 import machine
 
 # Wi-Fi configuration
-ssid = "scientiac"
-password = "hehehehe"
+ssid = "stuti_dhrn_2.4"
+password = "stuti@linux@dhrn"
 
 
 # Function to connect to Wi-Fi

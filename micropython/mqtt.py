@@ -1,35 +1,54 @@
 import machine
 from umqtt.simple import MQTTClient
+import time
 
 # MQTT configuration
 client_id = "teserrabott"
-broker_address = "192.168.35.190"
+broker_address = "192.168.1.80"
 led_topic = b"led"
 
 # LED Pin
 led_pin = machine.Pin(15, machine.Pin.OUT)
 
 
-# On/Off logic
+def connect_mqtt():
+    c = MQTTClient(client_id, broker_address)
+    c.set_callback(callback)
+
+    while True:
+        try:
+            c.connect(clean_session=False)
+            print("Connected to MQTT broker.")
+            c.subscribe(led_topic)
+            return c
+        except OSError as e:
+            print(f"Connection error: {e}")
+            print("Retrying in 5 seconds...")
+            time.sleep(5)
+
+
 def callback(topic, msg):
     print(f"Received message on topic {topic.decode('utf-8')}: {msg.decode('utf-8')}")
 
     if topic == led_topic:
-        if msg == b"onn":
+        if msg == b"on":
             print("Turning on the LED")
-            # Turn on the LED
             led_pin.on()
-        elif msg == b"offf":
+        elif msg == b"off":
             print("Turning off the LED")
-            # Turn off the LED
             led_pin.off()
 
 
-c = MQTTClient(client_id, broker_address)
-c.set_callback(callback)
-c.connect()
-c.subscribe(led_topic)
+mqtt_client = connect_mqtt()
 
-print("Waiting for messages...")
-while True:
-    c.wait_msg()
+if mqtt_client:
+    print("Waiting for messages...")
+    while True:
+        try:
+            mqtt_client.wait_msg()
+        except OSError as e:
+            print(f"Error: {e}")
+            print("Reconnecting...")
+            mqtt_client = connect_mqtt()
+            if not mqtt_client:
+                break
