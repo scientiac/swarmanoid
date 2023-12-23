@@ -2,19 +2,13 @@ import cv2
 import cv2.aruco as aruco
 import numpy as np
 
-from micropython.secrets import BROKER_ADDRESS
 from camera import detect_camera
-
-import paho.mqtt.publish as publish
-import time
 from mqtt import establish_connection
 
-# broker_address = BROKER_ADDRESS
 led_topic = "led"
 client = establish_connection()
 
 # Define the dictionaries to try
-
 dictionaries_to_try = [
     # cv2.aruco.DICT_4X4_50,
     # cv2.aruco.DICT_4X4_100,
