@@ -4,36 +4,27 @@ import sys
 import subprocess
 
 
-def run_single_aruco():
+def run_aruco():
     # Specify the path to single_aruco.py
-    single_aruco_file = "./src/single_aruco.py"
-    subprocess.run(["python", single_aruco_file])
-
-
-def run_multi_aruco():
-    # Specify the path to multi_aruco.py
-    multi_aruco_file = "./src/multi_aruco.py"
-    subprocess.run(["python", multi_aruco_file])
+    aruco = "./src/aruco.py"
+    subprocess.run(["python", aruco])
 
 
 def run_mqtt():
     # Specify the path to multi_aruco.py
-    mqtt_file = "./src/mqtt_server.py"
-    subprocess.run(["python", mqtt_file])
+    mqtt = "./src/mqtt.py"
+    subprocess.run(["python", mqtt])
 
 
 def main():
     if len(sys.argv) == 1:
         # Run single_aruco.py for the default case
-        run_single_aruco()
-    elif len(sys.argv) == 2 and (sys.argv[1] == "--multiple" or sys.argv[1] == "-m"):
-        # Run multi_aruco.py for the --multiple or -m option
-        run_multi_aruco()
-    elif len(sys.argv) == 2 and (sys.argv[1] == "--mqtt" or sys.argv[1] == "-q"):
+        run_aruco()
+    elif len(sys.argv) == 2 and (sys.argv[1] == "--mqtt" or sys.argv[1] == "-m"):
         # Run multi_aruco.py for the --multiple or -m option
         run_mqtt()
     else:
-        print("Invalid command. Usage: ./main.py [--multiple|-m]")
+        print("Invalid command. Usage: ./main.py [--mqtt|-m]")
 
 
 if __name__ == "__main__":
