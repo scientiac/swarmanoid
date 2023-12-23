@@ -105,7 +105,7 @@ fi
 # Ask if the changes are to be pushed
 push_to_device=$(prompt_yes_no "Do you want to update it to esp? (Make sure it's plugged in!)")
 
-if [ "$in_root_dir" == "y" ]; then
+if [ "$push_to_device" == "y" ]; then
 	echo "Pushing the values to esp..."
 	ampy -p /dev/ttyUSB0 put ./src/micropython/secrets.py
 	echo "You can now disconnect and reconnect the esp."
