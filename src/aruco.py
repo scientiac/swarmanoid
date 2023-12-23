@@ -7,9 +7,11 @@ from camera import detect_camera
 
 import paho.mqtt.publish as publish
 import time
+from mqtt import establish_connection
 
-broker_address = BROKER_ADDRESS
+# broker_address = BROKER_ADDRESS
 led_topic = "led"
+client = establish_connection()
 
 # Define the dictionaries to try
 
@@ -81,10 +83,10 @@ while True:
 
                 # Mqtt
                 if 4 in ids:
-                    publish.single(led_topic, "on", hostname=broker_address)
+                    client.publish(led_topic, "on")
 
                 if 5 in ids:
-                    publish.single(led_topic, "off", hostname=broker_address)
+                    client.publish(led_topic, "off")
                 # Mqtt end
 
     # Display the frame
