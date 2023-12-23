@@ -38,6 +38,12 @@
       screen
       adafruit-ampy
       mosquitto
+      # For the script
+      networkmanager
+      wirelesstools
+      gnused
+      iproute2
+      unixtools.ifconfig
     ];
 
     shellHook = ''
@@ -61,7 +67,7 @@
       repl   - to enter the micropython repl
                 press [ctrl+a+k] and hit y to exit
 
-      push   - to sent it to the client
+      push   - to send it to the client
                 eg: push main.py
 
       switch - to switch values of wifi and broker address and push
