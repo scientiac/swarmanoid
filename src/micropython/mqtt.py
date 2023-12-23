@@ -4,7 +4,7 @@ import time
 from secrets import BROKER_ADDRESS
 
 # MQTT configuration
-client_id = "teserrabot"
+client_id = "teserraclient"
 broker_address = BROKER_ADDRESS
 led_topic = b"led"
 
