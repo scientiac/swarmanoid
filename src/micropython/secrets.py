@@ -1,0 +1,3 @@
+WIFI_SSID = "manju@vianet"
+WIFI_PASSWORD = "Vianet@2023"
+BROKER_ADDRESS = "192.168.1.98"

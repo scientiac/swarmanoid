@@ -1,7 +1,9 @@
+from micropython.secrets import BROKER_ADDRESS
+
 import paho.mqtt.publish as publish
 import time
 
-broker_address = "192.168.1.80"
+broker_address = BROKER_ADDRESS
 led_topic = "led"
 led_topic2 = "led2"
 
