@@ -1,3 +1,3 @@
-WIFI_SSID = "manju@vianet"
-WIFI_PASSWORD = "Vianet@2023"
-BROKER_ADDRESS = "192.168.1.98"
+WIFI_SSID = "stuti_dhrn_2.4"
+WIFI_PASSWORD = "stuti@linux@dhrn"
+BROKER_ADDRESS = "192.168.1.80"
