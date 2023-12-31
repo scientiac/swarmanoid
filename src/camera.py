@@ -29,13 +29,26 @@ def detect_camera():
         else:
             print("No live stream found using camera indices. Trying URL...")
 
+    elif platform.system() == "Darwin":
+        # Try camera indices
+        for i in range(1, 3):
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                print(f"Opened camera at index {i}.")
+                break
+        else:
+            print("No live stream found using camera indices. Trying URL...")
+
     # If camera is still not opened, try using the URL
     if cap is None or not cap.isOpened():
         cap = cv2.VideoCapture(url)
+        # if not fallback to default webcam.
         if not cap.isOpened():
             if platform.system() == "Linux":
                 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
             elif platform.system() == "Windows":
+                cap = cv2.VideoCapture(0)
+            elif platform.system() == "Darwin":
                 cap = cv2.VideoCapture(0)
             else:
                 print("No Supported Platform Found")

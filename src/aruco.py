@@ -1,6 +1,7 @@
 import cv2
 import cv2.aruco as aruco
 import numpy as np
+import time
 
 from camera import detect_camera
 from mqtt import establish_connection
@@ -76,12 +77,17 @@ while True:
                     cv2.putText(frame, string, (x, y), font, 0.5, (255, 0, 0))
 
                 # Mqtt
-                if 4 in ids:
-                    client.publish(led_topic, "on")
-
-                if 5 in ids:
-                    client.publish(led_topic, "off")
+                # if 4 in ids:
+                #     client.publish(led_topic, "on")
+                #
+                # if 5 in ids:
+                #     client.publish(led_topic, "off")
                 # Mqtt end
+                while True:
+                    client.publish(led_topic, "off")
+                    time.sleep(500)
+                    client.publish(led_topic, "off")
+                    time.sleep(500)
 
     # Display the frame
     cv2.imshow("ArUco Marker Detection", frame)
