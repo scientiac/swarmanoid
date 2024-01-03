@@ -76,13 +76,13 @@ while True:
                     string = str(x) + " " + str(y)
                     cv2.putText(frame, string, (x, y), font, 0.5, (255, 0, 0))
 
-                Mqtt
+                # Mqtt
                 if 4 in ids:
                     client.publish(led_topic, "on")
 
                 if 5 in ids:
                     client.publish(led_topic, "off")
-                Mqtt end
+                # Mqtt end
 
     # Display the frame
     cv2.imshow("ArUco Marker Detection", frame)
