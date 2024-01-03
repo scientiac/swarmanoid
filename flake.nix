@@ -8,7 +8,7 @@
     nixpkgs,
     ...
   } @ inputs: let
-    system = "x86_64-linux";
+    system = inputs.system or "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
 
     python = let
@@ -32,7 +32,7 @@
         paho-mqtt
       ]);
 
-    dependencies = with pkgs; [
+    dependencies = with pkgs; if !pkgs.stdenv.isDarwin then [
       # Micropython Dependencies
       esptool
       screen
@@ -44,6 +44,11 @@
       gnused
       iproute2
       unixtools.ifconfig
+    ]else[
+      esptool
+      screen
+      adafruit-ampy
+      mosquitto
     ];
 
     shellHook = ''
@@ -71,9 +76,12 @@
                 eg: push main.py
 
       switch - to switch values of wifi and broker address and push
-            "
+               [auto detection won't work on darwin]           
+      "
       }
+
     '';
+
   in {
     devShells.${system}.default = pkgs.mkShell {
       buildInputs = [pythonEnv] ++ dependencies;
