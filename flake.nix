@@ -8,7 +8,7 @@
     nixpkgs,
     ...
   } @ inputs: let
-    system = inputs.system or "x86_64-linux";
+    system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
 
     python = let
