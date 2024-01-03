@@ -21,6 +21,9 @@ botColor = (0,0,0)
 botX = 200
 botY = 200
 
+# To set the speed of the bot.
+speed = 0.2
+
 # DIMENTIONS
 originalDimention = [40, 40, 305, 305, 20, 50, 80, 15]
 scale = 2
@@ -59,12 +62,18 @@ corner2 = pygame.image.load('markers/C2.svg').convert()
 corner3 = pygame.image.load('markers/C3.svg').convert()
 corner4 = pygame.image.load('markers/C4.svg').convert()
 
+# MARKER FOR BOT
+bot1 = pygame.image.load('markers/B69.svg').convert()
+
 # RESIZING MARKERS
 corner1 = pygame.transform.scale(corner1, (markerSize, markerSize))
 corner2 = pygame.transform.scale(corner2, (markerSize, markerSize))
 corner3 = pygame.transform.scale(corner3, (markerSize, markerSize))
 corner4 = pygame.transform.scale(corner4, (markerSize, markerSize))
 
+bot1 = pygame.transform.scale(bot1, (markerSize, markerSize))
+
+# Position of Markers
 rectCorner1 = pygame.Rect(arenaPad, arenaPad, markerSize, markerSize)
 rectCorner2 = pygame.Rect(arenaPad+arenaX-markerSize, arenaPad, markerSize, markerSize)
 rectCorner3 = pygame.Rect(arenaPad+arenaX-markerSize, arenaPad+arenaY-markerSize, markerSize, markerSize)
@@ -78,6 +87,7 @@ lock = threading.Lock()
 
 
 def pygame_loop():
+    global botX, botY  # Declare botX and botY as global variables
     while True:
 
         with lock:
@@ -90,9 +100,6 @@ def pygame_loop():
     
             # BACKGROUND COLOR
             canvas.fill(backgroundColor) 
-
-            bot = pygame.Rect(botX, botY, botWidth, botHeight)
-            pygame.draw.rect(canvas, botColor, bot)
 
             pygame.draw.rect(canvas, BLUE, arenaInternal, 1)
             pygame.draw.rect(canvas, BLUE, arenaInner, 1)
@@ -109,6 +116,35 @@ def pygame_loop():
             canvas.blit(corner2, rectCorner2)
             canvas.blit(corner3, rectCorner3)
             canvas.blit(corner4, rectCorner4)
+
+            bot = pygame.Rect(botX, botY, botWidth, botHeight)
+            pygame.draw.rect(canvas, botColor, bot)
+
+            # stores keys pressed  
+            keys = pygame.key.get_pressed() 
+      
+            # if left arrow key is pressed 
+            if keys[pygame.K_LEFT] and botX>0: 
+          
+                # decrement in x co-ordinate 
+                botX -= speed
+          
+            # if left arrow key is pressed 
+            if keys[pygame.K_RIGHT] and botX<canvasWidth-botWidth: 
+          
+                # increment in x co-ordinate 
+                botX += speed 
+         
+            # if left arrow key is pressed    
+            if keys[pygame.K_UP] and botY>0: 
+          
+                # decrement in y co-ordinate 
+                botY -= speed 
+          
+            # if left arrow key is pressed    
+            if keys[pygame.K_DOWN] and botY<canvasHeight-botHeight: 
+                # increment in y co-ordinate 
+                botY += speed        
 
             pygame.display.update()
 
