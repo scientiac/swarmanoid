@@ -11,12 +11,12 @@ import numpy as np
 
 app = Flask(__name__)
 
-backgroundColor = (255,255,255) 
+backgroundColor = (105,255,255) 
 WHITE = (255,255,255)
 BLUE = (0,0,255)
 RED = (255,0,0)
 GREEN = (0,255,0)
-botColor = (0,0,0) 
+botColor = (100,0,0) 
 
 botX = 200
 botY = 200
@@ -47,8 +47,8 @@ markerSize = D[7]
 
 arenaInternal = pygame.Rect(arenaPad, arenaPad, arenaX, arenaY)
 arenaInner = pygame.Rect(arenaPad+markerSize, arenaPad+markerSize, arenaX-2*markerSize, arenaY-2*markerSize)
-wasteOrganic = pygame.Rect(arenaPad, arenaY/2-wasteAreaX/2+arenaPad/2, wasteAreaX, wasteAreaY)
-wasteInorganic = pygame.Rect(arenaX/2-wasteAreaX/2+arenaPad/2, arenaPad, wasteAreaY, wasteAreaX)
+wasteOrganic = pygame.Rect(arenaPad, arenaPad+arenaY/2-wasteAreaY/2, wasteAreaX, wasteAreaY)
+wasteInorganic = pygame.Rect(arenaPad+arenaX/2-wasteAreaY/2, arenaPad, wasteAreaY, wasteAreaX)
 
 canvasWidth = arenaPad+arenaX+arenaPad
 canvasHeight = arenaPad+arenaY+arenaPad
@@ -65,6 +65,10 @@ corner4 = pygame.image.load('markers/C4.svg').convert()
 # MARKER FOR BOT
 bot1 = pygame.image.load('markers/B69.svg').convert()
 
+# MARKERS FOR WASTE AREAS
+wasteOrganicMarker = pygame.image.load('markers/W1.svg').convert()
+wasteInorganicMarker = pygame.image.load('markers/W2.svg').convert()
+
 # RESIZING MARKERS
 corner1 = pygame.transform.scale(corner1, (markerSize, markerSize))
 corner2 = pygame.transform.scale(corner2, (markerSize, markerSize))
@@ -73,12 +77,18 @@ corner4 = pygame.transform.scale(corner4, (markerSize, markerSize))
 
 bot1 = pygame.transform.scale(bot1, (markerSize, markerSize))
 
+wasteOrganicMarker = pygame.transform.scale(wasteOrganicMarker, (markerSize, markerSize))
+wasteInorganicMarker = pygame.transform.scale(wasteInorganicMarker, (markerSize, markerSize))
+
 # Position of Markers
 rectCorner1 = pygame.Rect(arenaPad, arenaPad, markerSize, markerSize)
 rectCorner2 = pygame.Rect(arenaPad+arenaX-markerSize, arenaPad, markerSize, markerSize)
 rectCorner3 = pygame.Rect(arenaPad+arenaX-markerSize, arenaPad+arenaY-markerSize, markerSize, markerSize)
 rectCorner4 = pygame.Rect(arenaPad, arenaPad+arenaY-markerSize, markerSize, markerSize)
-  
+
+rectWasteOrganicMarker = pygame.Rect(arenaPad-markerSize/2+wasteAreaX/2, arenaPad+arenaX/2-markerSize/2, markerSize, markerSize)
+rectWasteInorganicMarker = pygame.Rect(arenaPad+arenaY/2-markerSize/2, arenaPad-markerSize/2+wasteAreaX/2, markerSize, markerSize)
+
 # TITLE OF CANVAS 
 pygame.display.set_caption("Swarmanoid Simulation") 
 
@@ -117,8 +127,16 @@ def pygame_loop():
             canvas.blit(corner3, rectCorner3)
             canvas.blit(corner4, rectCorner4)
 
+            canvas.blit(wasteOrganicMarker, rectWasteOrganicMarker)
+            canvas.blit(wasteInorganicMarker, rectWasteInorganicMarker)
+
             bot = pygame.Rect(botX, botY, botWidth, botHeight)
             pygame.draw.rect(canvas, botColor, bot)
+
+            #Marker For Bot
+            rectBot1 = pygame.Rect(botX+botWidth/1.45-markerSize, botY+botHeight/1.45-markerSize, markerSize, markerSize)
+            pygame.draw.rect(canvas, RED, rectBot1, 1)
+            canvas.blit(bot1, rectBot1)
 
             # stores keys pressed  
             keys = pygame.key.get_pressed() 
