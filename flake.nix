@@ -57,7 +57,6 @@
     shellHook = ''
             alias run="python ./main.py"
             screen -S mqtt-session -dm mosquitto -c etc/mosquitto.conf
-            export PYGAME_DETECT_AVX2=1
             alias show="screen -r mqtt-session"
             alias repl="screen /dev/ttyUSB0 115200"
             alias push="ampy -p /dev/ttyUSB0 put"
