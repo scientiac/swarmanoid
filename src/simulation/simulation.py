@@ -8,6 +8,7 @@ import threading
 from flask import Flask, render_template, Response
 import cv2
 import numpy as np 
+import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
 
@@ -64,6 +65,7 @@ corner4 = pygame.image.load('markers/C4.svg').convert()
 
 # MARKER FOR BOT
 bot1 = pygame.image.load('markers/B69.svg').convert()
+bot2 = pygame.image.load('markers/B96.svg').convert()
 
 # MARKERS FOR WASTE AREAS
 wasteOrganicMarker = pygame.image.load('markers/W1.svg').convert()
@@ -76,6 +78,7 @@ corner3 = pygame.transform.scale(corner3, (markerSize, markerSize))
 corner4 = pygame.transform.scale(corner4, (markerSize, markerSize))
 
 bot1 = pygame.transform.scale(bot1, (markerSize, markerSize))
+bot2 = pygame.transform.scale(bot2, (markerSize, markerSize))
 
 wasteOrganicMarker = pygame.transform.scale(wasteOrganicMarker, (markerSize, markerSize))
 wasteInorganicMarker = pygame.transform.scale(wasteInorganicMarker, (markerSize, markerSize))
@@ -91,6 +94,32 @@ rectWasteInorganicMarker = pygame.Rect(arenaPad+arenaY/2-markerSize/2, arenaPad-
 
 # TITLE OF CANVAS 
 pygame.display.set_caption("Swarmanoid Simulation") 
+
+# MQTT settings
+broker_address = "192.168.1.80"
+client = mqtt.Client()
+
+# Callback when a message is received
+def on_message(client, userdata, msg):
+    global botX, botY
+
+    message = msg.payload.decode("utf-8")
+
+    # Move the bot based on the received message
+    if message == "left" and botX > 0:
+        botX -= speed
+    elif message == "right" and botX < canvasWidth - botWidth:
+        botX += speed
+    elif message == "up" and botY > 0:
+        botY -= speed
+    elif message == "down" and botY < canvasHeight - botHeight:
+        botY += speed
+
+# Connect to MQTT broker and subscribe to the bot movement topic
+client.connect(broker_address, 1883, 60)
+client.subscribe("bot")
+client.on_message = on_message
+client.loop_start()
 
 # Creating a lock to handle multithreading
 lock = threading.Lock()
@@ -137,6 +166,16 @@ def pygame_loop():
             rectBot1 = pygame.Rect(botX+botWidth/1.45-markerSize, botY+botHeight/1.45-markerSize, markerSize, markerSize)
             pygame.draw.rect(canvas, RED, rectBot1, 1)
             canvas.blit(bot1, rectBot1)
+            
+            #######################################################################################################################
+            bott = pygame.Rect(botX+100, botY+100, botWidth, botHeight)
+            pygame.draw.rect(canvas, botColor, bott)
+
+            #Marker For Bott
+            rectBot2 = pygame.Rect(botX+100+botWidth/1.45-markerSize, botY+100+botHeight/1.45-markerSize, markerSize, markerSize)
+            pygame.draw.rect(canvas, RED, rectBot2, 1)
+            canvas.blit(bot2, rectBot2)
+            #######################################################################################################################
 
             # stores keys pressed  
             keys = pygame.key.get_pressed() 

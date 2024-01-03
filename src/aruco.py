@@ -6,7 +6,7 @@ import time
 from camera import detect_camera
 from mqtt import establish_connection
 
-led_topic = "led"
+topic = "bot"
 client = establish_connection()
 
 # Define the dictionaries to try
@@ -54,7 +54,7 @@ while True:
 
         # Create an ArUco marker board
         board = aruco.CharucoBoard((3, 3), 0.04, 0.01, dictionary)
-
+        
         # Detect ArUco markers
         corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, dictionary)
 
@@ -77,11 +77,28 @@ while True:
                     cv2.putText(frame, string, (x, y), font, 0.5, (255, 0, 0))
 
                 # Mqtt
-                if 4 in ids:
-                    client.publish(led_topic, "on")
+                counter = 0
+                while counter < 100:
+                    client.publish(topic, "right")
+                    counter += 1
 
-                if 5 in ids:
-                    client.publish(led_topic, "off")
+                # Mqtt
+                counter = 0
+                while counter < 100:
+                    client.publish(topic, "down")
+                    counter += 1
+
+                # Mqtt
+                counter = 0
+                while counter < 100:
+                    client.publish(topic, "left")
+                    counter += 1
+                    
+                counter = 0
+                while counter < 100:
+                    client.publish(topic, "up")
+                    counter += 1
+                # client.publish(led_topic, "off")
                 # Mqtt end
 
     # Display the frame
