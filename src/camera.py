@@ -4,7 +4,7 @@ import platform
 
 def detect_camera():
     # setting the url for ipcam
-    url = "http://192.168.1.105:4747/video"
+    url = "http://127.0.0.1:5000/video_feed"
 
     # Initialize the camera
     cap = None
