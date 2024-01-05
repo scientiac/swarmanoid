@@ -23,17 +23,18 @@ wasteHeight = 30
 waveBotX = 200
 waveBotY = 200
 
-speed = 0.2
+speed = 1
 
 botWidth = 80
 botHeight = 80
-
 
 markerSize = 30
 
 botColor = (255, 255, 255)
 RED = (255, 0, 0)
 
+# Initialize active waste variables
+active_waste = None
 
 # Keyboard Movement Logic
 from keyMovement import movement
@@ -62,18 +63,6 @@ waste08 = pygame.transform.scale(waste08, (wasteMarkerSize, wasteMarkerSize))
 waste09 = pygame.transform.scale(waste09, (wasteMarkerSize, wasteMarkerSize))
 waste10 = pygame.transform.scale(waste10, (wasteMarkerSize, wasteMarkerSize))
 
-# Rectangles for waste positions
-waste01X, waste01Y = 170, 470
-waste02X, waste02Y = 270, 370
-waste03X, waste03Y = 470, 170
-waste04X, waste04Y = 370, 270
-waste05X, waste05Y = 470, 325
-waste06X, waste06Y = 170, 170
-waste07X, waste07Y = 270, 270
-waste08X, waste08Y = 370, 370
-waste09X, waste09Y = 470, 470
-waste10X, waste10Y = 170, 325
-
 # MARKER FOR BOT
 bot1 = pygame.image.load("markers/B69.svg").convert()
 
@@ -97,8 +86,9 @@ def drawBots():
     return waveBot, rectBot1
 
 
-def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
+def drawWasteBoxWithMarker(wasteImage, wastePosition):
     # Draw the waste box
+    wasteX, wasteY = wastePosition["x"], wastePosition["y"]
     wasteBox = pygame.Rect(wasteX, wasteY, wasteWidth, wasteHeight)
     pygame.draw.rect(canvas, (0, 0, 0), wasteBox)
 
@@ -112,8 +102,23 @@ def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
     canvas.blit(wasteImage, markerRect)
 
 
+waste_positions = {
+    "waste01": {"x": 170, "y": 470},
+    "waste02": {"x": 270, "y": 370},
+    "waste03": {"x": 470, "y": 170},
+    "waste04": {"x": 370, "y": 270},
+    "waste05": {"x": 470, "y": 325},
+    "waste06": {"x": 170, "y": 170},
+    "waste07": {"x": 270, "y": 270},
+    "waste08": {"x": 370, "y": 370},
+    "waste09": {"x": 470, "y": 470},
+    "waste10": {"x": 170, "y": 325},
+}
+
 # Main game loop
-picking_up_waste = False
+clock = pygame.time.Clock()
+active_waste = None
+moving_with_bot = False
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -123,30 +128,23 @@ while True:
     canvas.fill((105, 255, 255))
 
     # Draw the wastes
-    drawWasteBoxWithMarker(waste01, waste01X, waste01Y)
-    drawWasteBoxWithMarker(waste02, waste02X, waste02Y)
-    drawWasteBoxWithMarker(waste03, waste03X, waste03Y)
-    drawWasteBoxWithMarker(waste04, waste04X, waste04Y)
-    drawWasteBoxWithMarker(waste05, waste05X, waste05Y)
-    drawWasteBoxWithMarker(waste06, waste06X, waste06Y)
-    drawWasteBoxWithMarker(waste07, waste07X, waste07Y)
-    drawWasteBoxWithMarker(waste08, waste08X, waste08Y)
-    drawWasteBoxWithMarker(waste09, waste09X, waste09Y)
-    drawWasteBoxWithMarker(waste10, waste10X, waste10Y)
+    for waste_key, waste_position in waste_positions.items():
+        if moving_with_bot and active_waste == waste_key:
+            # If the waste is active, move it with the bot
+            waste_position["x"] = waveBotX + botWidth / 2 - wasteWidth / 2
+            waste_position["y"] = waveBotY - botWidth / 2 + wasteHeight
+        drawWasteBoxWithMarker(locals()[f"waste{waste_key[5:]}"], waste_position)
 
     waveBot, rectBot1 = drawBots()
 
-    particleBotX = 0
-    particleBotY = 0
-
-    # stores keys pressed
+    # Stores keys pressed
     keys = pygame.key.get_pressed()
     waveBotX, waveBotY, particleBotX, particleBotY = movement(
         keys,
         waveBotX,
         waveBotY,
-        particleBotX,
-        particleBotY,
+        0,
+        0,
         speed,
         canvasWidth,
         canvasHeight,
@@ -154,5 +152,29 @@ while True:
         botHeight,
     )
 
+    # Check for collisions with waveBot
+    for waste_key, waste_position in waste_positions.items():
+        waste_rect = pygame.Rect(
+            waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
+        )
+        if (
+            keys[K_p]
+            and waveBot.colliderect(waste_rect)
+            and waveBot.top <= waste_rect.bottom
+            and waveBot.bottom >= waste_rect.bottom
+        ):
+            # Store the active waste and start moving it with the bot
+            active_waste = waste_key
+            moving_with_bot = True
+
+    if keys[K_d] and active_waste is not None:
+        # If 'd' is pressed and there is an active waste, stop moving it with the bot
+        moving_with_bot = False
+        active_waste = None
+
+    # Print the active waste (for demonstration purposes)
+    print("Active Waste:", active_waste)
+
     # Update the display
     pygame.display.update()
+    clock.tick(60)
