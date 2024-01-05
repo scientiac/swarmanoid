@@ -40,7 +40,7 @@ particleBotY = 200
 speed = 0.2
 
 # DIMENTIONS
-originalDimention = [40, 40, 305, 305, 20, 50, 80, 15]
+originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 10, 5, 15]
 scale = 2
 D = [element * scale for element in originalDimention]
 
@@ -59,6 +59,11 @@ wasteAreaY = D[6]
 
 # MARKER SIZE
 markerSize = D[7]
+wasteMarkerSize = D[8]
+
+# WASTE SIZE
+wasteWidth = D[9]
+wasteHeight = D[10]
 
 arenaInternal = pygame.Rect(arenaPad, arenaPad, arenaX, arenaY)
 
@@ -82,6 +87,48 @@ canvasHeight = arenaPad + arenaY + arenaPad
 
 # CREATING CANVAS
 canvas = pygame.display.set_mode((canvasWidth, canvasHeight))
+
+
+# WASTE
+# Marker Size
+markerSize = 20
+
+# Importing Waste
+waste01 = pygame.image.load("markers/M100.svg").convert()
+waste02 = pygame.image.load("markers/M111.svg").convert()
+waste03 = pygame.image.load("markers/M122.svg").convert()
+waste04 = pygame.image.load("markers/M133.svg").convert()
+waste05 = pygame.image.load("markers/M144.svg").convert()
+waste06 = pygame.image.load("markers/M155.svg").convert()
+waste07 = pygame.image.load("markers/M166.svg").convert()
+waste08 = pygame.image.load("markers/M177.svg").convert()
+waste09 = pygame.image.load("markers/M188.svg").convert()
+waste10 = pygame.image.load("markers/M199.svg").convert()
+
+# Resizing Waste
+waste01 = pygame.transform.scale(waste01, (markerSize, markerSize))
+waste02 = pygame.transform.scale(waste02, (markerSize, markerSize))
+waste03 = pygame.transform.scale(waste03, (markerSize, markerSize))
+waste04 = pygame.transform.scale(waste04, (markerSize, markerSize))
+waste05 = pygame.transform.scale(waste05, (markerSize, markerSize))
+waste06 = pygame.transform.scale(waste06, (markerSize, markerSize))
+waste07 = pygame.transform.scale(waste07, (markerSize, markerSize))
+waste08 = pygame.transform.scale(waste08, (markerSize, markerSize))
+waste09 = pygame.transform.scale(waste09, (markerSize, markerSize))
+waste10 = pygame.transform.scale(waste10, (markerSize, markerSize))
+
+# Rectangles for waste positions
+waste01X, waste01Y = 180, 480
+waste02X, waste02Y = 280, 380
+waste03X, waste03Y = 480, 180
+waste04X, waste04Y = 380, 280
+waste05X, waste05Y = 480, 335
+waste06X, waste06Y = 180, 180
+waste07X, waste07Y = 280, 280
+waste08X, waste08Y = 380, 380
+waste09X, waste09Y = 480, 480
+waste10X, waste10Y = 180, 335
+
 
 # MARKERS
 corner1 = pygame.image.load("markers/C1.svg").convert()
@@ -148,6 +195,32 @@ rectWasteInorganicMarker = pygame.Rect(
 )
 
 
+def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
+    # Draw the waste box
+    wasteBox = pygame.Rect(wasteX, wasteY, wasteWidth, wasteHeight)
+    pygame.draw.rect(canvas, (0, 0, 0), wasteBox)
+
+    # Calculate the position for the waste marker
+    markerX = wasteX - wasteMarkerSize
+    markerY = wasteY + wasteHeight / 2 - wasteMarkerSize / 2
+
+    # Draw the waste marker
+    markerRect = pygame.Rect(markerX, markerY, wasteMarkerSize, wasteMarkerSize)
+    pygame.draw.rect(canvas, (0, 0, 0), markerRect, 1)
+    canvas.blit(wasteImage, markerRect)
+
+def drawWaste():
+    drawWasteBoxWithMarker(waste01, waste01X, waste01Y)
+    drawWasteBoxWithMarker(waste02, waste02X, waste02Y)
+    drawWasteBoxWithMarker(waste03, waste03X, waste03Y)
+    drawWasteBoxWithMarker(waste04, waste04X, waste04Y)
+    drawWasteBoxWithMarker(waste05, waste05X, waste05Y)
+    drawWasteBoxWithMarker(waste06, waste06X, waste06Y)
+    drawWasteBoxWithMarker(waste07, waste07X, waste07Y)
+    drawWasteBoxWithMarker(waste08, waste08X, waste08Y)
+    drawWasteBoxWithMarker(waste09, waste09X, waste09Y)
+    drawWasteBoxWithMarker(waste10, waste10X, waste10Y)
+    
 def drawArena():
     pygame.draw.rect(canvas, BLUE, arenaInternal, 1)
     pygame.draw.rect(canvas, BLUE, arenaInner, 1)
@@ -165,6 +238,7 @@ def drawArena():
     canvas.blit(corner3, rectCorner3)
     canvas.blit(corner4, rectCorner4)
 
+    # Draw Waste Spot Markers
     canvas.blit(wasteOrganicMarker, rectWasteOrganicMarker)
     canvas.blit(wasteInorganicMarker, rectWasteInorganicMarker)
 
@@ -273,6 +347,7 @@ def pygame_loop():
             canvas.fill(backgroundColor)
 
             drawArena()
+            drawWaste()
             waveBot, rectBot1, particleBot, rectBot2 = drawBots()
 
             collisionTolerance = 10
