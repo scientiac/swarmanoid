@@ -195,8 +195,11 @@ def drawBots():
         markerSize,
         markerSize,
     )
+
     pygame.draw.rect(canvas, RED, rectBot2, 1)
     canvas.blit(bot2, rectBot2)
+
+    return waveBot, rectBot1, particleBot, rectBot2
 
 
 # TITLE OF CANVAS
@@ -270,7 +273,18 @@ def pygame_loop():
             canvas.fill(backgroundColor)
 
             drawArena()
-            drawBots()
+            waveBot, rectBot1, particleBot, rectBot2 = drawBots()
+
+            collisionTolerance = 10
+            if waveBot.colliderect(particleBot):
+                if abs(particleBot.top - waveBot.bottom) < collisionTolerance:
+                    waveBotY -= speed
+                if abs(particleBot.bottom - waveBot.top) < collisionTolerance:
+                    waveBotY += speed
+                if abs(particleBot.left - waveBot.right) < collisionTolerance:
+                    waveBotX -= speed
+                if abs(particleBot.right - waveBot.left) < collisionTolerance:
+                    waveBotX += speed
 
             # stores keys pressed
             keys = pygame.key.get_pressed()
