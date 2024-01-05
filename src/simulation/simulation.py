@@ -26,7 +26,8 @@ WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-botColor = (100, 0, 0)
+botColor = (200, 200, 0)
+wasteColor = (0, 200, 200)
 
 waveBotX = 200
 waveBotY = 200
@@ -37,11 +38,11 @@ particleBotY = 200
 #######################################################################################################################
 
 # To set the speed of the bot.
-speed = 0.2
+speed = 1
 
 # DIMENTIONS
 originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 10, 5, 15]
-scale = 2
+scale = 2.2
 D = [element * scale for element in originalDimention]
 
 # Bot Dimensions
@@ -90,8 +91,6 @@ canvas = pygame.display.set_mode((canvasWidth, canvasHeight))
 
 
 # WASTE
-# Marker Size
-markerSize = 20
 
 # Importing Waste
 waste01 = pygame.image.load("markers/M100.svg").convert()
@@ -106,28 +105,28 @@ waste09 = pygame.image.load("markers/M188.svg").convert()
 waste10 = pygame.image.load("markers/M199.svg").convert()
 
 # Resizing Waste
-waste01 = pygame.transform.scale(waste01, (markerSize, markerSize))
-waste02 = pygame.transform.scale(waste02, (markerSize, markerSize))
-waste03 = pygame.transform.scale(waste03, (markerSize, markerSize))
-waste04 = pygame.transform.scale(waste04, (markerSize, markerSize))
-waste05 = pygame.transform.scale(waste05, (markerSize, markerSize))
-waste06 = pygame.transform.scale(waste06, (markerSize, markerSize))
-waste07 = pygame.transform.scale(waste07, (markerSize, markerSize))
-waste08 = pygame.transform.scale(waste08, (markerSize, markerSize))
-waste09 = pygame.transform.scale(waste09, (markerSize, markerSize))
-waste10 = pygame.transform.scale(waste10, (markerSize, markerSize))
+waste01 = pygame.transform.scale(waste01, (wasteMarkerSize, wasteMarkerSize))
+waste02 = pygame.transform.scale(waste02, (wasteMarkerSize, wasteMarkerSize))
+waste03 = pygame.transform.scale(waste03, (wasteMarkerSize, wasteMarkerSize))
+waste04 = pygame.transform.scale(waste04, (wasteMarkerSize, wasteMarkerSize))
+waste05 = pygame.transform.scale(waste05, (wasteMarkerSize, wasteMarkerSize))
+waste06 = pygame.transform.scale(waste06, (wasteMarkerSize, wasteMarkerSize))
+waste07 = pygame.transform.scale(waste07, (wasteMarkerSize, wasteMarkerSize))
+waste08 = pygame.transform.scale(waste08, (wasteMarkerSize, wasteMarkerSize))
+waste09 = pygame.transform.scale(waste09, (wasteMarkerSize, wasteMarkerSize))
+waste10 = pygame.transform.scale(waste10, (wasteMarkerSize, wasteMarkerSize))
 
 # Rectangles for waste positions
-waste01X, waste01Y = 180, 480
-waste02X, waste02Y = 280, 380
-waste03X, waste03Y = 480, 180
-waste04X, waste04Y = 380, 280
-waste05X, waste05Y = 480, 335
-waste06X, waste06Y = 180, 180
-waste07X, waste07Y = 280, 280
-waste08X, waste08Y = 380, 380
-waste09X, waste09Y = 480, 480
-waste10X, waste10Y = 180, 335
+waste01X, waste01Y = 90 * scale, 240 * scale
+waste02X, waste02Y = 140 * scale, 190 * scale
+waste03X, waste03Y = 240 * scale, 90 * scale
+waste04X, waste04Y = 190 * scale, 140 * scale
+waste05X, waste05Y = 240 * scale, 167.5 * scale
+waste06X, waste06Y = 90 * scale, 90 * scale
+waste07X, waste07Y = 140 * scale, 140 * scale
+waste08X, waste08Y = 190 * scale, 190 * scale
+waste09X, waste09Y = 240 * scale, 240 * scale
+waste10X, waste10Y = 90 * scale, 167.5 * scale
 
 
 # MARKERS
@@ -198,7 +197,7 @@ rectWasteInorganicMarker = pygame.Rect(
 def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
     # Draw the waste box
     wasteBox = pygame.Rect(wasteX, wasteY, wasteWidth, wasteHeight)
-    pygame.draw.rect(canvas, (0, 0, 0), wasteBox)
+    pygame.draw.rect(canvas, wasteColor, wasteBox)
 
     # Calculate the position for the waste marker
     markerX = wasteX - wasteMarkerSize
@@ -208,6 +207,7 @@ def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
     markerRect = pygame.Rect(markerX, markerY, wasteMarkerSize, wasteMarkerSize)
     pygame.draw.rect(canvas, (0, 0, 0), markerRect, 1)
     canvas.blit(wasteImage, markerRect)
+
 
 def drawWaste():
     drawWasteBoxWithMarker(waste01, waste01X, waste01Y)
@@ -220,7 +220,8 @@ def drawWaste():
     drawWasteBoxWithMarker(waste08, waste08X, waste08Y)
     drawWasteBoxWithMarker(waste09, waste09X, waste09Y)
     drawWasteBoxWithMarker(waste10, waste10X, waste10Y)
-    
+
+
 def drawArena():
     pygame.draw.rect(canvas, BLUE, arenaInternal, 1)
     pygame.draw.rect(canvas, BLUE, arenaInner, 1)
@@ -334,6 +335,7 @@ lock = threading.Lock()
 
 
 def pygame_loop():
+    clock = pygame.time.Clock()
     global waveBotX, waveBotY, particleBotX, particleBotY  # Declare botX and botY as global variables
     while True:
         with lock:
@@ -377,6 +379,7 @@ def pygame_loop():
             )
 
             pygame.display.update()
+            clock.tick(30)
 
 
 @app.route("/")
@@ -387,11 +390,17 @@ def index():
 def generate():
     while True:
         with lock:
+            # Create local copies of canvasWidth and canvasHeight
+            local_canvas_width = int(canvasWidth)
+            local_canvas_height = int(canvasHeight)
+
             # Capture the Pygame screen
             img_str = pygame.image.tostring(canvas, "RGB")
             img_np = np.frombuffer(img_str, dtype=np.uint8)
+
             img = cv2.cvtColor(
-                np.reshape(img_np, (canvasHeight, canvasWidth, 3)), cv2.COLOR_RGB2BGR
+                np.reshape(img_np, (local_canvas_height, local_canvas_width, 3)),
+                cv2.COLOR_RGB2BGR,
             )
 
             # Encode the frame to JPEG
