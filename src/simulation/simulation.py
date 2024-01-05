@@ -274,7 +274,7 @@ pygame.display.set_caption("Swarmanoid Simulation")
 
 # Callback when a message is received
 def on_wave_message(waveClient, userdata, msg):
-    global waveBotX, waveBotY
+    global waveBotX, waveBotY, activeWastes
 
     message = msg.payload.decode("utf-8")
 
@@ -288,6 +288,27 @@ def on_wave_message(waveClient, userdata, msg):
     elif message == "down" and waveBotY < canvasHeight - botHeight:
         waveBotY += speed
 
+    # Handle "pick" command
+    if message == "pick":
+        # WaveBot picks up the waste
+        for waste_key, waste_position in waste_positions.items():
+            waste_rect = pygame.Rect(
+                waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
+            )
+
+            if (
+                waveBot.colliderect(waste_rect)
+                and waveBot.top <= waste_rect.bottom
+                and waveBot.bottom >= waste_rect.bottom
+            ):
+                activeWastes["waveBot"] = waste_key
+                carryingBots["waveBot"] = "waveBot"
+
+    # Handle "drop" command
+    if message == "drop" and "waveBot" in activeWastes:
+        activeWastes["waveBot"] = None
+        carryingBots["waveBot"] = None
+
 
 # Connect to MQTT broker and subscribe to the wave movement topic
 waveClient.connect(broker_address, 1883, 60)
@@ -299,7 +320,7 @@ waveClient.loop_start()
 #######################################################################################################################
 # Callback when a message is received
 def on_particle_message(particleClient, userdata, msg):
-    global particleBotX, particleBotY
+    global particleBotX, particleBotY, activeWastes
 
     message = msg.payload.decode("utf-8")
 
@@ -312,6 +333,27 @@ def on_particle_message(particleClient, userdata, msg):
         particleBotY -= speed
     elif message == "down" and particleBotY < canvasHeight - botHeight:
         particleBotY += speed
+
+    # Handle "pick" command
+    if message == "pick":
+        # ParticleBot picks up the waste
+        for waste_key, waste_position in waste_positions.items():
+            waste_rect = pygame.Rect(
+                waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
+            )
+
+            if (
+                particleBot.colliderect(waste_rect)
+                and particleBot.top <= waste_rect.bottom
+                and particleBot.bottom >= waste_rect.bottom
+            ):
+                activeWastes["particleBot"] = waste_key
+                carryingBots["particleBot"] = "particleBot"
+
+    # Handle "drop" command
+    if message == "drop" and "particleBot" in activeWastes:
+        activeWastes["particleBot"] = None
+        carryingBots["particleBot"] = None
 
 
 # Connect to MQTT broker and subscribe to the particle movement topic
@@ -414,12 +456,16 @@ def pygame_loop():
                         activeWastes["waveBot"] = waste_key
                         carryingBots["waveBot"] = "waveBot"
 
-                elif keys[K_d] and keys[K_LSHIFT]:
+                elif (
+                    keys[K_d]
+                    and keys[K_LSHIFT]
+                    and activeWastes["particleBot"] is not None
+                ):
                     # Shift + D: ParticleBot releases the waste
                     activeWastes["particleBot"] = None
                     carryingBots["particleBot"] = None
 
-                elif keys[K_d]:
+                elif keys[K_d] and activeWastes["waveBot"] is not None:
                     # D: WaveBot releases the waste
                     activeWastes["waveBot"] = None
                     carryingBots["waveBot"] = None
@@ -442,7 +488,7 @@ def pygame_loop():
             # print("Active Wastes:", activeWastes)
 
             pygame.display.update()
-            clock.tick(30)
+            clock.tick(60)
 
 
 @app.route("/")
