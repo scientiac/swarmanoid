@@ -6,9 +6,9 @@ from pygame.locals import *
 pygame.init()
 
 # Set up the window
-window_width = 610
-window_height = 610
-canvas = pygame.display.set_mode((window_width, window_height))
+canvasWidth = 610
+canvasHeight = 610
+canvas = pygame.display.set_mode((canvasWidth, canvasHeight))
 pygame.display.set_caption("Waste Grid")
 
 # Marker Size
@@ -17,6 +17,24 @@ wasteMarkerSize = 20
 # waste Size
 wasteWidth = 10
 wasteHeight = 30
+
+waveBotX = 200
+waveBotY = 200
+
+speed = 0.2
+
+botWidth = 80
+botHeight = 80
+
+
+markerSize = 30
+
+botColor = (255, 255, 255)
+RED = (255, 0, 0)
+
+
+# Keyboard Movement Logic
+from keyMovement import movement
 
 # Importing Waste
 waste01 = pygame.image.load("markers/M100.svg").convert()
@@ -54,6 +72,28 @@ waste08X, waste08Y = 370, 370
 waste09X, waste09Y = 470, 470
 waste10X, waste10Y = 170, 325
 
+# MARKER FOR BOT
+bot1 = pygame.image.load("markers/B69.svg").convert()
+
+bot1 = pygame.transform.scale(bot1, (markerSize, markerSize))
+
+
+def drawBots():
+    waveBot = pygame.Rect(waveBotX, waveBotY, botWidth, botHeight)
+    pygame.draw.rect(canvas, botColor, waveBot)
+
+    # Marker For Bot
+    rectBot1 = pygame.Rect(
+        waveBotX + botWidth / 2 - markerSize / 2,
+        waveBotY + botHeight / 2 - markerSize / 2,
+        markerSize,
+        markerSize,
+    )
+    pygame.draw.rect(canvas, RED, rectBot1, 1)
+    canvas.blit(bot1, rectBot1)
+
+    return waveBot, rectBot1
+
 
 def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
     # Draw the waste box
@@ -71,11 +111,13 @@ def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
 
 
 # Main game loop
+picking_up_waste = False
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
+
     canvas.fill((105, 255, 255))
 
     # Draw the wastes
@@ -89,6 +131,26 @@ while True:
     drawWasteBoxWithMarker(waste08, waste08X, waste08Y)
     drawWasteBoxWithMarker(waste09, waste09X, waste09Y)
     drawWasteBoxWithMarker(waste10, waste10X, waste10Y)
+
+    waveBot, rectBot1 = drawBots()
+
+    particleBotX = 0
+    particleBotY = 0
+
+    # stores keys pressed
+    keys = pygame.key.get_pressed()
+    waveBotX, waveBotY, particleBotX, particleBotY = movement(
+        keys,
+        waveBotX,
+        waveBotY,
+        particleBotX,
+        particleBotY,
+        speed,
+        canvasWidth,
+        canvasHeight,
+        botWidth,
+        botHeight,
+    )
 
     # Update the display
     pygame.display.update()
