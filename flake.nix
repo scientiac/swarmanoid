@@ -33,6 +33,9 @@
         # Simulation
         pygame
         flask
+        # LSP
+        python-lsp-server
+        black
       ]);
 
     dependencies = with pkgs; if !pkgs.stdenv.isDarwin then [
