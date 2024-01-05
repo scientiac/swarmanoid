@@ -64,8 +64,6 @@ while True:
         if ids is not None and len(ids) > 0:
             aruco.drawDetectedMarkers(frame, corners, ids)
             for i, corner in enumerate(corners):
-                print(f"Marker {ids[i]} \ncoordinates: \n{corner}")
-
                 # Convert corners to int, as they are returned as float
                 corner = corner.astype(int)
 
@@ -73,32 +71,33 @@ while True:
                 cv2.polylines(frame, [corner[0]], True, (0, 0, 255), 1)
 
                 # Draw coordinates of ArUco marker
-                for point in corner[0]:
-                    x, y = point
-                    string = str(x) + " " + str(y)
-                    cv2.putText(frame, string, (x, y), font, 0.5, (255, 0, 0))
+                # for point in corner[0]:
+                #     x, y = point
+                #     string = str(x) + " " + str(y)
+                #     cv2.putText(frame, string, (x, y), font, 0.5, (255, 0, 0))
 
                 # Mqtt
-                counter = 0
-                while counter < 100:
-                    client.publish(topic_wave, "right")
-                    counter += 1
 
-                counter = 0
-                while counter < 100:
-                    client.publish(topic_particle, "down")
-                    counter += 1
+                # counter = 0
+                # while counter < 100:
+                #     client.publish(topic_wave, "right")
+                #     counter += 1
 
-                # Mqtt
-                counter = 0
-                while counter < 100:
-                    client.publish(topic_wave, "left")
-                    counter += 1
+                # counter = 0
+                # while counter < 100:
+                #     client.publish(topic_particle, "down")
+                #     counter += 1
 
-                counter = 0
-                while counter < 100:
-                    client.publish(topic_particle, "up")
-                    counter += 1
+                # # Mqtt
+                # counter = 0
+                # while counter < 100:
+                #     client.publish(topic_wave, "left")
+                #     counter += 1
+
+                # counter = 0
+                # while counter < 100:
+                #     client.publish(topic_particle, "up")
+                #     counter += 1
 
                 # Mqtt end
 
