@@ -31,7 +31,6 @@ wasteColor = (0, 200, 200)
 
 waveBotX = 200
 waveBotY = 200
-
 #######################################################################################################################
 particleBotX = 300
 particleBotY = 200
@@ -66,7 +65,13 @@ wasteMarkerSize = D[8]
 wasteWidth = D[9]
 wasteHeight = D[10]
 
-activeWaste = None
+# global variables for particle bot
+waveBot = pygame.Rect(waveBotX, waveBotY, botWidth, botHeight)
+particleBot = pygame.Rect(particleBotX, particleBotY, botWidth, botHeight)
+
+# Active Wastes and Carrying Bots
+activeWastes = {"waveBot": None, "particleBot": None}
+carryingBots = {"waveBot": None, "particleBot": None}
 
 arenaInternal = pygame.Rect(arenaPad, arenaPad, arenaX, arenaY)
 
@@ -274,7 +279,7 @@ pygame.display.set_caption("Swarmanoid Simulation")
 
 # Callback when a message is received
 def on_wave_message(waveClient, userdata, msg):
-    global waveBotX, waveBotY, activeWastes
+    global waveBotX, waveBotY, activeWastes, waveBot, carryingBots
 
     message = msg.payload.decode("utf-8")
 
@@ -310,17 +315,10 @@ def on_wave_message(waveClient, userdata, msg):
         carryingBots["waveBot"] = None
 
 
-# Connect to MQTT broker and subscribe to the wave movement topic
-waveClient.connect(broker_address, 1883, 60)
-waveClient.subscribe("wave")
-waveClient.on_message = on_wave_message
-waveClient.loop_start()
-
-
 #######################################################################################################################
 # Callback when a message is received
 def on_particle_message(particleClient, userdata, msg):
-    global particleBotX, particleBotY, activeWastes
+    global particleBotX, particleBotY, activeWastes, particleBot, carryingBots
 
     message = msg.payload.decode("utf-8")
 
@@ -356,12 +354,20 @@ def on_particle_message(particleClient, userdata, msg):
         carryingBots["particleBot"] = None
 
 
+# Connect to MQTT broker and subscribe to the wave movement topic
+waveClient.connect(broker_address, 1883, 60)
+waveClient.subscribe("wave")
+waveClient.on_message = on_wave_message
+waveClient.loop_start()
+
+#######################################################################################################################
+
 # Connect to MQTT broker and subscribe to the particle movement topic
 particleClient.connect(broker_address, 1883, 60)
 particleClient.subscribe("particle")
 particleClient.on_message = on_particle_message
 particleClient.loop_start()
-#######################################################################################################################
+
 
 # Creating a lock to handle multithreading
 lock = threading.Lock()
@@ -370,8 +376,6 @@ lock = threading.Lock()
 def pygame_loop():
     clock = pygame.time.Clock()
     global waveBotX, waveBotY, particleBotX, particleBotY  # Declare botX and botY as global variables
-    activeWastes = {"waveBot": None, "particleBot": None}
-    carryingBots = {"waveBot": None, "particleBot": None}
     moving_with_bot = False
     while True:
         with lock:
