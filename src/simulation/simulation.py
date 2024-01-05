@@ -328,9 +328,9 @@ lock = threading.Lock()
 def pygame_loop():
     clock = pygame.time.Clock()
     global waveBotX, waveBotY, particleBotX, particleBotY  # Declare botX and botY as global variables
-    activeWaste = None
+    activeWastes = {"waveBot": None, "particleBot": None}
+    carryingBots = {"waveBot": None, "particleBot": None}
     moving_with_bot = False
-    carryingBot = None
     while True:
         with lock:
             # Get inputs
@@ -388,39 +388,58 @@ def pygame_loop():
                 botHeight,
             )
 
-            # Check for collisions with waveBot
+            # Check for collisions with bots and wastes
             for waste_key, waste_position in waste_positions.items():
                 waste_rect = pygame.Rect(
                     waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
                 )
-                if (
-                    keys[K_p]
-                    and waveBot.colliderect(waste_rect)
-                    and waveBot.top <= waste_rect.bottom
-                    and waveBot.bottom >= waste_rect.bottom
-                ):
-                    # Store the active waste and start moving it with the bot
-                    activeWaste = waste_key
-                    moving_with_bot = True
-                    carryingBot = "waveBot"
-                if (
-                    keys[K_p]
-                    and particleBot.colliderect(waste_rect)
-                    and particleBot.top <= waste_rect.bottom
-                    and particleBot.bottom >= waste_rect.bottom
-                ):
-                    # Store the active waste and start moving it with the bot
-                    activeWaste = waste_key
-                    moving_with_bot = True
-                    carryingBot = "particleBot"
 
-            if keys[K_d] and activeWaste is not None:
-                # If 'd' is pressed and there is an active waste, stop moving it with the bot
-                moving_with_bot = False
-                activeWaste = None
+                if keys[K_p] and keys[K_LSHIFT]:
+                    # Shift + P: ParticleBot picks up the waste
+                    if (
+                        particleBot.colliderect(waste_rect)
+                        and particleBot.top <= waste_rect.bottom
+                        and particleBot.bottom >= waste_rect.bottom
+                    ):
+                        activeWastes["particleBot"] = waste_key
+                        carryingBots["particleBot"] = "particleBot"
 
-            # Print the active waste (for demonstration purposes)
-            print("Active Waste:", activeWaste)
+                elif keys[K_p]:
+                    # P: WaveBot picks up the waste
+                    if (
+                        waveBot.colliderect(waste_rect)
+                        and waveBot.top <= waste_rect.bottom
+                        and waveBot.bottom >= waste_rect.bottom
+                    ):
+                        activeWastes["waveBot"] = waste_key
+                        carryingBots["waveBot"] = "waveBot"
+
+                elif keys[K_d] and keys[K_LSHIFT]:
+                    # Shift + D: ParticleBot releases the waste
+                    activeWastes["particleBot"] = None
+                    carryingBots["particleBot"] = None
+
+                elif keys[K_d]:
+                    # D: WaveBot releases the waste
+                    activeWastes["waveBot"] = None
+                    carryingBots["waveBot"] = None
+
+            # Move wastes with their respective bots
+            for bot_key, waste_key in activeWastes.items():
+                if waste_key is not None and carryingBots[bot_key] == bot_key:
+                    waste_position = waste_positions[waste_key]
+                    # Move the waste with the bot
+                    if bot_key == "waveBot":
+                        waste_position["x"] = waveBotX + botWidth / 2 - wasteWidth / 2
+                        waste_position["y"] = waveBotY - botWidth / 2 + wasteHeight
+                    elif bot_key == "particleBot":
+                        waste_position["x"] = (
+                            particleBotX + botWidth / 2 - wasteWidth / 2
+                        )
+                        waste_position["y"] = particleBotY - botWidth / 2 + wasteHeight
+
+            # Print the active wastes (for demonstration purposes)
+            # print("Active Wastes:", activeWastes)
 
             pygame.display.update()
             clock.tick(30)
