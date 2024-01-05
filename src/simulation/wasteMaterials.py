@@ -33,9 +33,6 @@ markerSize = 30
 botColor = (255, 255, 255)
 RED = (255, 0, 0)
 
-# Initialize active waste variables
-active_waste = None
-
 # Keyboard Movement Logic
 from keyMovement import movement
 
@@ -117,7 +114,7 @@ waste_positions = {
 
 # Main game loop
 clock = pygame.time.Clock()
-active_waste = None
+activeWaste = None
 moving_with_bot = False
 while True:
     for event in pygame.event.get():
@@ -129,7 +126,7 @@ while True:
 
     # Draw the wastes
     for waste_key, waste_position in waste_positions.items():
-        if moving_with_bot and active_waste == waste_key:
+        if moving_with_bot and activeWaste == waste_key:
             # If the waste is active, move it with the bot
             waste_position["x"] = waveBotX + botWidth / 2 - wasteWidth / 2
             waste_position["y"] = waveBotY - botWidth / 2 + wasteHeight
@@ -164,16 +161,16 @@ while True:
             and waveBot.bottom >= waste_rect.bottom
         ):
             # Store the active waste and start moving it with the bot
-            active_waste = waste_key
+            activeWaste = waste_key
             moving_with_bot = True
 
-    if keys[K_d] and active_waste is not None:
+    if keys[K_d] and activeWaste is not None:
         # If 'd' is pressed and there is an active waste, stop moving it with the bot
         moving_with_bot = False
-        active_waste = None
+        activeWaste = None
 
     # Print the active waste (for demonstration purposes)
-    print("Active Waste:", active_waste)
+    print("Active Waste:", activeWaste)
 
     # Update the display
     pygame.display.update()

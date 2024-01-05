@@ -66,6 +66,8 @@ wasteMarkerSize = D[8]
 wasteWidth = D[9]
 wasteHeight = D[10]
 
+activeWaste = None
+
 arenaInternal = pygame.Rect(arenaPad, arenaPad, arenaX, arenaY)
 
 arenaInner = pygame.Rect(
@@ -117,17 +119,18 @@ waste09 = pygame.transform.scale(waste09, (wasteMarkerSize, wasteMarkerSize))
 waste10 = pygame.transform.scale(waste10, (wasteMarkerSize, wasteMarkerSize))
 
 # Rectangles for waste positions
-waste01X, waste01Y = 90 * scale, 240 * scale
-waste02X, waste02Y = 140 * scale, 190 * scale
-waste03X, waste03Y = 240 * scale, 90 * scale
-waste04X, waste04Y = 190 * scale, 140 * scale
-waste05X, waste05Y = 240 * scale, 167.5 * scale
-waste06X, waste06Y = 90 * scale, 90 * scale
-waste07X, waste07Y = 140 * scale, 140 * scale
-waste08X, waste08Y = 190 * scale, 190 * scale
-waste09X, waste09Y = 240 * scale, 240 * scale
-waste10X, waste10Y = 90 * scale, 167.5 * scale
-
+waste_positions = {
+    "waste01": {"x": 90 * scale, "y": 240 * scale},
+    "waste02": {"x": 140 * scale, "y": 190 * scale},
+    "waste03": {"x": 240 * scale, "y": 90 * scale},
+    "waste04": {"x": 190 * scale, "y": 140 * scale},
+    "waste05": {"x": 240 * scale, "y": 167.5 * scale},
+    "waste06": {"x": 90 * scale, "y": 90 * scale},
+    "waste07": {"x": 140 * scale, "y": 140 * scale},
+    "waste08": {"x": 190 * scale, "y": 190 * scale},
+    "waste09": {"x": 240 * scale, "y": 240 * scale},
+    "waste10": {"x": 90 * scale, "y": 167.5 * scale},
+}
 
 # MARKERS
 corner1 = pygame.image.load("markers/C1.svg").convert()
@@ -194,10 +197,11 @@ rectWasteInorganicMarker = pygame.Rect(
 )
 
 
-def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
+def drawWasteBoxWithMarker(wasteImage, wastePosition):
     # Draw the waste box
+    wasteX, wasteY = wastePosition["x"], wastePosition["y"]
     wasteBox = pygame.Rect(wasteX, wasteY, wasteWidth, wasteHeight)
-    pygame.draw.rect(canvas, wasteColor, wasteBox)
+    pygame.draw.rect(canvas, (0, 0, 0), wasteBox)
 
     # Calculate the position for the waste marker
     markerX = wasteX - wasteMarkerSize
@@ -207,19 +211,6 @@ def drawWasteBoxWithMarker(wasteImage, wasteX, wasteY):
     markerRect = pygame.Rect(markerX, markerY, wasteMarkerSize, wasteMarkerSize)
     pygame.draw.rect(canvas, (0, 0, 0), markerRect, 1)
     canvas.blit(wasteImage, markerRect)
-
-
-def drawWaste():
-    drawWasteBoxWithMarker(waste01, waste01X, waste01Y)
-    drawWasteBoxWithMarker(waste02, waste02X, waste02Y)
-    drawWasteBoxWithMarker(waste03, waste03X, waste03Y)
-    drawWasteBoxWithMarker(waste04, waste04X, waste04Y)
-    drawWasteBoxWithMarker(waste05, waste05X, waste05Y)
-    drawWasteBoxWithMarker(waste06, waste06X, waste06Y)
-    drawWasteBoxWithMarker(waste07, waste07X, waste07Y)
-    drawWasteBoxWithMarker(waste08, waste08X, waste08Y)
-    drawWasteBoxWithMarker(waste09, waste09X, waste09Y)
-    drawWasteBoxWithMarker(waste10, waste10X, waste10Y)
 
 
 def drawArena():
@@ -337,6 +328,9 @@ lock = threading.Lock()
 def pygame_loop():
     clock = pygame.time.Clock()
     global waveBotX, waveBotY, particleBotX, particleBotY  # Declare botX and botY as global variables
+    activeWaste = None
+    moving_with_bot = False
+    carryingBot = None
     while True:
         with lock:
             # Get inputs
@@ -349,7 +343,23 @@ def pygame_loop():
             canvas.fill(backgroundColor)
 
             drawArena()
-            drawWaste()
+
+            # DRAW WASTE
+            for waste_key, waste_position in waste_positions.items():
+                if moving_with_bot and activeWaste == waste_key:
+                    # If the waste is active, move it with the bot
+                    if carryingBot == "waveBot":
+                        waste_position["x"] = waveBotX + botWidth / 2 - wasteWidth / 2
+                        waste_position["y"] = waveBotY - botWidth / 2 + wasteHeight
+                    if carryingBot == "particleBot":
+                        waste_position["x"] = (
+                            particleBotX + botWidth / 2 - wasteWidth / 2
+                        )
+                        waste_position["y"] = particleBotY - botWidth / 2 + wasteHeight
+                drawWasteBoxWithMarker(
+                    globals()[f"waste{waste_key[5:]}"], waste_position
+                )
+
             waveBot, rectBot1, particleBot, rectBot2 = drawBots()
 
             collisionTolerance = 10
@@ -377,6 +387,40 @@ def pygame_loop():
                 botWidth,
                 botHeight,
             )
+
+            # Check for collisions with waveBot
+            for waste_key, waste_position in waste_positions.items():
+                waste_rect = pygame.Rect(
+                    waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
+                )
+                if (
+                    keys[K_p]
+                    and waveBot.colliderect(waste_rect)
+                    and waveBot.top <= waste_rect.bottom
+                    and waveBot.bottom >= waste_rect.bottom
+                ):
+                    # Store the active waste and start moving it with the bot
+                    activeWaste = waste_key
+                    moving_with_bot = True
+                    carryingBot = "waveBot"
+                if (
+                    keys[K_p]
+                    and particleBot.colliderect(waste_rect)
+                    and particleBot.top <= waste_rect.bottom
+                    and particleBot.bottom >= waste_rect.bottom
+                ):
+                    # Store the active waste and start moving it with the bot
+                    activeWaste = waste_key
+                    moving_with_bot = True
+                    carryingBot = "particleBot"
+
+            if keys[K_d] and activeWaste is not None:
+                # If 'd' is pressed and there is an active waste, stop moving it with the bot
+                moving_with_bot = False
+                activeWaste = None
+
+            # Print the active waste (for demonstration purposes)
+            print("Active Waste:", activeWaste)
 
             pygame.display.update()
             clock.tick(30)
