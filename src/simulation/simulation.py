@@ -278,6 +278,13 @@ pygame.display.set_caption("Swarmanoid Simulation")
 
 
 # Callback when a message is received
+
+# Define unique identifiers for each bot
+WAVE_BOT_ID = "waveBot"
+PARTICLE_BOT_ID = "particleBot"
+
+
+# Callback when a message is received
 def on_wave_message(waveClient, userdata, msg):
     global waveBotX, waveBotY, activeWastes, waveBot, carryingBots
 
@@ -295,24 +302,11 @@ def on_wave_message(waveClient, userdata, msg):
 
     # Handle "pick" command
     if message == "pick":
-        # WaveBot picks up the waste
-        for waste_key, waste_position in waste_positions.items():
-            waste_rect = pygame.Rect(
-                waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
-            )
-
-            if (
-                waveBot.colliderect(waste_rect)
-                and waveBot.top <= waste_rect.bottom
-                and waveBot.bottom >= waste_rect.bottom
-            ):
-                activeWastes["waveBot"] = waste_key
-                carryingBots["waveBot"] = "waveBot"
+        pick_waste(WAVE_BOT_ID)
 
     # Handle "drop" command
-    if message == "drop" and "waveBot" in activeWastes:
-        activeWastes["waveBot"] = None
-        carryingBots["waveBot"] = None
+    if message == "drop":
+        drop_waste(WAVE_BOT_ID)
 
 
 #######################################################################################################################
@@ -334,24 +328,47 @@ def on_particle_message(particleClient, userdata, msg):
 
     # Handle "pick" command
     if message == "pick":
-        # ParticleBot picks up the waste
-        for waste_key, waste_position in waste_positions.items():
-            waste_rect = pygame.Rect(
-                waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
-            )
-
-            if (
-                particleBot.colliderect(waste_rect)
-                and particleBot.top <= waste_rect.bottom
-                and particleBot.bottom >= waste_rect.bottom
-            ):
-                activeWastes["particleBot"] = waste_key
-                carryingBots["particleBot"] = "particleBot"
+        pick_waste(PARTICLE_BOT_ID)
 
     # Handle "drop" command
-    if message == "drop" and "particleBot" in activeWastes:
-        activeWastes["particleBot"] = None
-        carryingBots["particleBot"] = None
+    if message == "drop":
+        drop_waste(PARTICLE_BOT_ID)
+
+
+# Function to handle picking up waste
+def pick_waste(bot_id):
+    global activeWastes, carryingBots, waste_positions
+
+    # Check if the bot is already carrying waste
+    if activeWastes[bot_id] is not None:
+        return
+
+    # Get the rectangle of the bot
+    bot_rect = pygame.Rect(
+        globals()[f"{bot_id}X"], globals()[f"{bot_id}Y"], botWidth, botHeight
+    )
+
+    # Iterate through waste positions to find a nearby waste
+    for waste_key, waste_position in waste_positions.items():
+        waste_rect = pygame.Rect(
+            waste_position["x"], waste_position["y"], wasteWidth, wasteHeight
+        )
+
+        # Check if the bot and waste rectangles collide
+        if bot_rect.colliderect(waste_rect):
+            # Set the waste as active for the bot
+            activeWastes[bot_id] = waste_key
+            carryingBots[bot_id] = bot_id
+            break  # Exit the loop after picking up one waste
+
+
+# Function to handle dropping waste
+def drop_waste(bot_id):
+    global activeWastes, carryingBots
+
+    if activeWastes[bot_id] is not None:
+        activeWastes[bot_id] = None
+        carryingBots[bot_id] = None
 
 
 # Connect to MQTT broker and subscribe to the wave movement topic
@@ -367,7 +384,6 @@ particleClient.connect(broker_address, 1883, 60)
 particleClient.subscribe("particle")
 particleClient.on_message = on_particle_message
 particleClient.loop_start()
-
 
 # Creating a lock to handle multithreading
 lock = threading.Lock()
