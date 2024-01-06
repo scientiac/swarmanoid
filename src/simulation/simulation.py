@@ -37,7 +37,7 @@ particleBotY = 200
 #######################################################################################################################
 
 # To set the speed of the bot.
-speed = 1
+speed = 2
 
 # DIMENTIONS
 originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 10, 5, 15]
@@ -206,7 +206,7 @@ def drawWasteBoxWithMarker(wasteImage, wastePosition):
     # Draw the waste box
     wasteX, wasteY = wastePosition["x"], wastePosition["y"]
     wasteBox = pygame.Rect(wasteX, wasteY, wasteWidth, wasteHeight)
-    pygame.draw.rect(canvas, (0, 0, 0), wasteBox)
+    pygame.draw.rect(canvas, wasteColor, wasteBox)
 
     # Calculate the position for the waste marker
     markerX = wasteX - wasteMarkerSize
@@ -376,7 +376,6 @@ lock = threading.Lock()
 def pygame_loop():
     clock = pygame.time.Clock()
     global waveBotX, waveBotY, particleBotX, particleBotY  # Declare botX and botY as global variables
-    moving_with_bot = False
     while True:
         with lock:
             # Get inputs
@@ -392,16 +391,6 @@ def pygame_loop():
 
             # DRAW WASTE
             for waste_key, waste_position in waste_positions.items():
-                if moving_with_bot and activeWaste == waste_key:
-                    # If the waste is active, move it with the bot
-                    if carryingBot == "waveBot":
-                        waste_position["x"] = waveBotX + botWidth / 2 - wasteWidth / 2
-                        waste_position["y"] = waveBotY - botWidth / 2 + wasteHeight
-                    if carryingBot == "particleBot":
-                        waste_position["x"] = (
-                            particleBotX + botWidth / 2 - wasteWidth / 2
-                        )
-                        waste_position["y"] = particleBotY - botWidth / 2 + wasteHeight
                 drawWasteBoxWithMarker(
                     globals()[f"waste{waste_key[5:]}"], waste_position
                 )
