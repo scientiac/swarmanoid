@@ -72,8 +72,7 @@
                 press [ctrl+a+d] to hide
 
       run    - to run the main script
-                [-m or --multiple] to detect multiple kind of markers
-                [-q or --mqtt]     to run a test mqtt python server
+                [-s or --simulate] to simulate and host feed of the arena
 
       repl   - to enter the micropython repl
                 press [ctrl+a+k] and hit y to exit
