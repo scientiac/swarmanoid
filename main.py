@@ -10,21 +10,21 @@ def run_aruco():
     subprocess.run(["python", aruco])
 
 
-def run_mqtt():
+def run_simulation():
     # Specify the path to multi_aruco.py
-    mqtt = "./src/mqtt.py"
-    subprocess.run(["python", mqtt])
+    simulation = "./src/simulation.py"
+    subprocess.run(["python", simulation])
 
 
 def main():
     if len(sys.argv) == 1:
         # Run single_aruco.py for the default case
         run_aruco()
-    elif len(sys.argv) == 2 and (sys.argv[1] == "--mqtt" or sys.argv[1] == "-m"):
-        # Run multi_aruco.py for the --multiple or -m option
-        run_mqtt()
+    elif len(sys.argv) == 2 and (sys.argv[1] == "--simulate" or sys.argv[1] == "-s"):
+        # Run simulation.py for the --simulate or -s option
+        run_simulation()
     else:
-        print("Invalid command. Usage: ./main.py [--mqtt|-m]")
+        print("Invalid command. Usage: ./main.py [--simulate|-s]")
 
 
 if __name__ == "__main__":
