@@ -440,6 +440,10 @@ def pygame_loop():
                 botHeight,
             )
 
+            if keys[K_q]:
+                pygame.quit()
+                sys.exit()
+
             # Check for collisions with bots and wastes
             for waste_key, waste_position in waste_positions.items():
                 waste_rect = pygame.Rect(
