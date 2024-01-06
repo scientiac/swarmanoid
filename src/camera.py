@@ -2,7 +2,7 @@ import cv2
 import platform
 
 
-def detect_camera():
+def detect_camera(desired_fps=30):
     # setting the url for ipcam
     url = "http://0.0.0.0:5000/video_feed"
 
@@ -42,6 +42,8 @@ def detect_camera():
     # If camera is still not opened, try using the URL
     if cap is None or not cap.isOpened():
         cap = cv2.VideoCapture(url)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
         # if not fallback to default webcam.
         if not cap.isOpened():
             if platform.system() == "Linux":
@@ -52,5 +54,8 @@ def detect_camera():
                 cap = cv2.VideoCapture(0)
             else:
                 print("No Supported Platform Found")
+
+    # Set the desired FPS
+    cap.set(cv2.CAP_PROP_FPS, desired_fps)
 
     return cap

@@ -12,11 +12,12 @@ import paho.mqtt.client as mqtt
 
 # Keyboard Movement Logic
 from keyMovement import movement
+from micropython.secrets import BROKER_ADDRESS
 
 app = Flask(__name__)
 
 # MQTT settings
-broker_address = "192.168.1.80"
+broker_address = BROKER_ADDRESS
 waveClient = mqtt.Client()
 particleClient = mqtt.Client()
 
@@ -37,7 +38,7 @@ particleBotY = 200
 #######################################################################################################################
 
 # To set the speed of the bot.
-speed = 2
+speed = 1
 
 # DIMENTIONS
 originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 10, 5, 15]
@@ -100,16 +101,16 @@ canvas = pygame.display.set_mode((canvasWidth, canvasHeight))
 # WASTE
 
 # Importing Waste
-waste01 = pygame.image.load("markers/M100.svg").convert()
-waste02 = pygame.image.load("markers/M111.svg").convert()
-waste03 = pygame.image.load("markers/M122.svg").convert()
-waste04 = pygame.image.load("markers/M133.svg").convert()
-waste05 = pygame.image.load("markers/M144.svg").convert()
-waste06 = pygame.image.load("markers/M155.svg").convert()
-waste07 = pygame.image.load("markers/M166.svg").convert()
-waste08 = pygame.image.load("markers/M177.svg").convert()
-waste09 = pygame.image.load("markers/M188.svg").convert()
-waste10 = pygame.image.load("markers/M199.svg").convert()
+waste01 = pygame.image.load("src/markers/M100.svg").convert()
+waste02 = pygame.image.load("src/markers/M111.svg").convert()
+waste03 = pygame.image.load("src/markers/M122.svg").convert()
+waste04 = pygame.image.load("src/markers/M133.svg").convert()
+waste05 = pygame.image.load("src/markers/M144.svg").convert()
+waste06 = pygame.image.load("src/markers/M155.svg").convert()
+waste07 = pygame.image.load("src/markers/M166.svg").convert()
+waste08 = pygame.image.load("src/markers/M177.svg").convert()
+waste09 = pygame.image.load("src/markers/M188.svg").convert()
+waste10 = pygame.image.load("src/markers/M199.svg").convert()
 
 # Resizing Waste
 waste01 = pygame.transform.scale(waste01, (wasteMarkerSize, wasteMarkerSize))
@@ -138,18 +139,18 @@ waste_positions = {
 }
 
 # MARKERS
-corner1 = pygame.image.load("markers/C1.svg").convert()
-corner2 = pygame.image.load("markers/C2.svg").convert()
-corner3 = pygame.image.load("markers/C3.svg").convert()
-corner4 = pygame.image.load("markers/C4.svg").convert()
+corner1 = pygame.image.load("src/markers/C1.svg").convert()
+corner2 = pygame.image.load("src/markers/C2.svg").convert()
+corner3 = pygame.image.load("src/markers/C3.svg").convert()
+corner4 = pygame.image.load("src/markers/C4.svg").convert()
 
 # MARKER FOR BOT
-bot1 = pygame.image.load("markers/B69.svg").convert()
-bot2 = pygame.image.load("markers/B96.svg").convert()
+bot1 = pygame.image.load("src/markers/B69.svg").convert()
+bot2 = pygame.image.load("src/markers/B96.svg").convert()
 
 # MARKERS FOR WASTE AREAS
-wasteOrganicMarker = pygame.image.load("markers/W22.svg").convert()
-wasteInorganicMarker = pygame.image.load("markers/W33.svg").convert()
+wasteOrganicMarker = pygame.image.load("src/markers/W22.svg").convert()
+wasteInorganicMarker = pygame.image.load("src/markers/W33.svg").convert()
 
 # RESIZING MARKERS
 corner1 = pygame.transform.scale(corner1, (markerSize, markerSize))
@@ -497,7 +498,7 @@ def pygame_loop():
             # print("Active Wastes:", activeWastes)
 
             pygame.display.update()
-            clock.tick(60)
+            clock.tick(130)
 
 
 @app.route("/")
