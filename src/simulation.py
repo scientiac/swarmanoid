@@ -22,7 +22,7 @@ waveClient = mqtt.Client()
 particleClient = mqtt.Client()
 
 
-backgroundColor = (105, 255, 255)
+backgroundColor = (100, 255, 255)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -502,7 +502,8 @@ def pygame_loop():
             # print("Active Wastes:", activeWastes)
 
             pygame.display.update()
-            clock.tick(130)
+            # clock.tick(130)
+            clock.tick(65)
 
 
 @app.route("/")

@@ -11,6 +11,9 @@ topic_particle = "particle"
 
 client = establish_connection()
 
+# Dictionary to store marker IDs and their midpoints
+marker_midpoints = {}
+
 # Define the dictionaries to try
 dictionaries_to_try = [
     # cv2.aruco.DICT_4X4_50,
@@ -54,8 +57,7 @@ while True:
         # Load the predefined dictionary for ArUco markers
         dictionary = aruco.getPredefinedDictionary(dictionary_id)
 
-        # Create an ArUco marker board
-        board = aruco.CharucoBoard((3, 3), 0.04, 0.01, dictionary)
+        parameters = aruco.DetectorParameters()
 
         # Detect ArUco markers
         corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, dictionary)
@@ -63,12 +65,48 @@ while True:
         # Draw the markers on the frame
         if ids is not None and len(ids) > 0:
             aruco.drawDetectedMarkers(frame, corners, ids)
+
             for i, corner in enumerate(corners):
                 # Convert corners to int, as they are returned as float
                 corner = corner.astype(int)
 
                 # Draw boundary of ArUco marker
                 cv2.polylines(frame, [corner[0]], True, (0, 0, 255), 1)
+
+                # Calculate midpoint of the top edge
+                top_midpoint = tuple(np.mean(corner[0][:2], axis=0).astype(int))
+
+                mid_center = tuple(np.mean(corner[0], axis=0).astype(int))
+
+                cv2.circle(frame, mid_center, 3, (255, 0, 0), -1)
+
+                # Draw arrow pointing to the top edge
+                cv2.arrowedLine(
+                    frame,
+                    mid_center,
+                    top_midpoint,
+                    (0, 255, 0),
+                    2,
+                    tipLength=2,
+                )
+
+                # Store marker ID and midpoint in the dictionary
+                marker_id = ids[i][0]
+                marker_midpoints[marker_id] = top_midpoint
+
+                # Access angle relative to the arena
+                if marker_id in [69, 96, 1, 2, 3, 4]:
+                    angle_rad = np.arctan2(
+                        top_midpoint[1] - mid_center[1],
+                        top_midpoint[0] - mid_center[0],
+                    )
+
+                    angle_deg = np.degrees(angle_rad)
+                    # Ensure the angle is between 0 and 360
+                    angle_deg = int(abs(angle_deg + 180)) % 360
+                    int_angle_deg = angle_deg
+
+                    print(f"Marker {marker_id} angle: {int_angle_deg} degrees")
 
                 # Draw coordinates of ArUco marker
                 # for point in corner[0]:
@@ -78,10 +116,7 @@ while True:
 
                 # Mqtt
 
-                # counter = 0
-                # while counter < 100:
-                #     client.publish(topic_wave, "right")
-                #     counter += 1
+                # client.publish(topic_wave, "right")
 
                 # counter = 0
                 # while counter < 100:
