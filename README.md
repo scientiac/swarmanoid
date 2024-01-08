@@ -21,7 +21,7 @@ sudo ./etc/enable-flakes-non-nixos.sh
 
 3. Run `nix develop`. For the first time it will take some time to install `opencv`, because it should be compiled manually with the `enableGTK2` flag to displaying windows using the `opencv` library itself. The environment will be loaded instantly upon running `nix develop` the next time.
 
-4. `./aruco.py` to run the program.
+4. `help` to see the help text.
 
 > Note: Since, the development is done in the nix environment you should enter the environment each time running `nix develop` if you exit or closed the terminal.
 
