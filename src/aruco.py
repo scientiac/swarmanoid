@@ -11,6 +11,12 @@ topic_particle = "particle"
 
 client = establish_connection()
 
+# Load camera parameters from YAML file
+fs = cv2.FileStorage("miatoll.yml", cv2.FILE_STORAGE_READ)
+camera_matrix = fs.getNode("new_matrix").mat()
+dist_coefficients = fs.getNode("distortion_coef").mat()
+fs.release()
+
 # Dictionary to store marker IDs and their midpoints
 marker_midpoints = {}
 
