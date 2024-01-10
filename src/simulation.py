@@ -28,7 +28,8 @@ BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 botColor = (200, 200, 0)
-wasteColor = (0, 200, 200)
+wasteColor = (255, 255, 255)
+# wasteColor = (0, 200, 200)
 
 waveBotX = 200
 waveBotY = 200
@@ -41,7 +42,7 @@ particleBotY = 200
 speed = 1
 
 # DIMENTIONS
-originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 10, 5, 15]
+originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 13, 5, 15]
 scale = 2.2
 D = [element * scale for element in originalDimention]
 
@@ -206,16 +207,16 @@ rectWasteInorganicMarker = pygame.Rect(
 def drawWasteBoxWithMarker(wasteImage, wastePosition):
     # Draw the waste box
     wasteX, wasteY = wastePosition["x"], wastePosition["y"]
-    wasteBox = pygame.Rect(wasteX, wasteY, wasteWidth, wasteHeight)
+    wasteBox = pygame.Rect(wasteX, wasteY, wasteHeight, wasteHeight)
     pygame.draw.rect(canvas, wasteColor, wasteBox)
 
     # Calculate the position for the waste marker
-    markerX = wasteX - wasteMarkerSize
+    markerX = wasteX - wasteMarkerSize / 2 + wasteHeight / 2
     markerY = wasteY + wasteHeight / 2 - wasteMarkerSize / 2
 
     # Draw the waste marker
     markerRect = pygame.Rect(markerX, markerY, wasteMarkerSize, wasteMarkerSize)
-    pygame.draw.rect(canvas, (0, 0, 0), markerRect, 1)
+    pygame.draw.rect(canvas, BLUE, markerRect, 1)
     canvas.blit(wasteImage, markerRect)
 
 

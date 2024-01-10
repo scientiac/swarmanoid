@@ -16,14 +16,21 @@ aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
 # Create ArUco parameters
 parameters = cv2.aruco.DetectorParameters()
 
-url = "http://192.168.1.105:4747/video"
+# url = "http://127.0.0.1:5000/video_feed"
+url = "http://192.168.1.105:4747/video?960x720"
+# url = "http://192.168.1.105:4747/video"
 
 # Initialize video capture (use 0 for default camera or provide the video file path)
 cap = cv2.VideoCapture(url)  # Change 0 to your camera index or video file path
 
+markerTL = 4
+markerTR = 2
+markerBL = 3
+markerBR = 5
+
 # Define the markers and their positions
-marker_ids = [3, 2, 4, 5]
-marker_corners_dict = {3: None, 2: None, 4: None, 5: None}
+marker_ids = [markerTL, markerTR, markerBL, markerBR]
+marker_corners_dict = {markerTL: None, markerTR: None, markerBL: None, markerBR: None}
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -48,27 +55,29 @@ while cap.isOpened():
 
         # Define the corners of the big marker
         big_marker_corners = [
-            marker_corners_dict[5][2],  # TL = 0
-            marker_corners_dict[2][1],  # BL = 3
-            marker_corners_dict[3][0],  # BR = 2
-            marker_corners_dict[4][3],  # TR = 1
+            marker_corners_dict[markerBR][2],  # TL = 0
+            marker_corners_dict[markerTR][1],  # BL = 3
+            marker_corners_dict[markerTL][0],  # BR = 2
+            marker_corners_dict[markerBL][3],  # TR = 1
         ]
+
+        
+        square_size = min(frame_width, frame_height)
+        destination_points = np.float32([
+            [square_size, square_size],
+            [square_size, 0],
+            [0, 0],
+            [0, square_size],
+        ])
 
         # Calculate perspective transformation matrix
         matrix = cv2.getPerspectiveTransform(
             np.float32(big_marker_corners),
-            np.float32(
-                [
-                    [frame_width, frame_height],
-                    [frame_width, 0],
-                    [0, 0],
-                    [0, frame_height],
-                ]
-            ),
+            destination_points
         )
 
         # Warp the frame using the perspective transformation matrix
-        warped_frame = cv2.warpPerspective(frame, matrix, (frame_width, frame_height))
+        warped_frame = cv2.warpPerspective(frame, matrix, (square_size, square_size))
 
         # Display the original and warped frames
         cv2.imshow("Original Frame", frame)

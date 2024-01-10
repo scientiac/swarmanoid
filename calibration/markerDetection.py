@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import cv2.aruco as aruco
 
-url = "http://192.168.1.105:4747/video"
+url = "http://127.0.0.1:5000/video_feed"
 
 # Aruco detection
 cap = cv2.VideoCapture(url)
