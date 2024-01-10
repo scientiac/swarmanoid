@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import cv2.aruco as aruco
 
-def get_warped_frame(input_frame, marker_ids):
+
+def get_warped_frame(input_frame, marker_ids, PAD):
     # Load camera parameters from YAML file
     fs = cv2.FileStorage("miatoll.yml", cv2.FILE_STORAGE_READ)
     camera_matrix = fs.getNode("new_matrix").mat()
@@ -36,41 +37,30 @@ def get_warped_frame(input_frame, marker_ids):
             marker_corners_dict[marker_ids[2]][3],  # TR = 1
         ]
 
-        # # Calculate perspective transformation matrix
-        # matrix = cv2.getPerspectiveTransform(
-        #     np.float32(big_marker_corners),
-        #     np.float32(
-        #         [
-        #             [frame_width, frame_height],
-        #             [frame_width, 0],
-        #             [0, 0],
-        #             [0, frame_height],
-        #         ]
-        #     ),
-        # )
-
         square_size = min(frame_width, frame_height)
-        destination_points = np.float32([
-            [square_size, square_size],
-            [square_size, 0],
-            [0, 0],
-            [0, square_size],
-        ])
+        destination_points = np.float32(
+            [
+                [square_size - PAD, square_size - PAD],
+                [square_size - PAD, 0 + PAD],
+                [0 + PAD, 0 + PAD],
+                [0 + PAD, square_size - PAD],
+            ]
+        )
 
         # Calculate perspective transformation matrix
         matrix = cv2.getPerspectiveTransform(
-            np.float32(big_marker_corners),
-            destination_points
+            np.float32(big_marker_corners), destination_points
         )
 
         # Warp the frame using the perspective transformation matrix
         warped_frame = cv2.warpPerspective(
-            input_frame, matrix, (frame_width, frame_height)
+            input_frame, matrix, (square_size, square_size)
         )
 
         return warped_frame, marker_corners_dict
 
     return None, None  # Return None if not all markers are detected
+
 
 # Example usage:
 # Define the dictionary to use

@@ -221,8 +221,8 @@ def drawWasteBoxWithMarker(wasteImage, wastePosition):
 
 
 def drawArena():
-    pygame.draw.rect(canvas, BLUE, arenaInternal, 1)
-    pygame.draw.rect(canvas, BLUE, arenaInner, 1)
+    # pygame.draw.rect(canvas, BLUE, arenaInternal, 1)
+    # pygame.draw.rect(canvas, BLUE, arenaInner, 1)
     pygame.draw.rect(canvas, GREEN, wasteOrganic)
     pygame.draw.rect(canvas, RED, wasteInorganic)
 

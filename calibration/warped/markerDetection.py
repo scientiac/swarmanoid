@@ -6,13 +6,17 @@ import cv2.aruco as aruco
 from frameCorrection import get_warped_frame
 
 # Example usage:
-url = "http://127.0.0.1:5000/video_feed"
-cap = cv2.VideoCapture(url)
+# url = "http://127.0.0.1:5000/video_feed"
+# url = "http://192.168.1.105:4747/video"
+# url = "http://192.168.1.105:4747/video?1280x720"
 
-markerTL = 1
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+# cap = cv2.VideoCapture(url)
+
+markerTL = 4
 markerTR = 2
-markerBL = 4
-markerBR = 3
+markerBL = 3
+markerBR = 5
 
 # Define the markers and their positions
 marker_ids = [markerTL, markerTR, markerBL, markerBR]
@@ -29,7 +33,7 @@ while cap.isOpened():
     if not ret:
         break
 
-    warped_frame, marker_corners_dict = get_warped_frame(frame, marker_ids)
+    warped_frame, marker_corners_dict = get_warped_frame(frame, marker_ids, 10)
 
     if warped_frame is not None:
         # Detect markers within the warped frame
