@@ -42,8 +42,8 @@ particleBotY = 200
 speed = 1
 
 # DIMENTIONS
-originalDimention = [40, 40, 305, 305, 20, 50, 80, 15, 13, 5, 15]
-scale = 2.2
+originalDimention = [40, 40, 300, 300, 20, 50, 80, 15, 15, 15, 15]
+scale = 2
 D = [element * scale for element in originalDimention]
 
 # Bot Dimensions
@@ -503,8 +503,8 @@ def pygame_loop():
             # print("Active Wastes:", activeWastes)
 
             pygame.display.update()
-            # clock.tick(130)
-            clock.tick(65)
+            clock.tick(80)
+            # clock.tick(30)
 
 
 @app.route("/")

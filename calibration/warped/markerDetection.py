@@ -7,16 +7,16 @@ from frameCorrection import get_warped_frame
 
 # Example usage:
 # url = "http://127.0.0.1:5000/video_feed"
-# url = "http://192.168.1.105:4747/video"
+url = "http://192.168.1.105:4747/video"
 # url = "http://192.168.1.105:4747/video?1280x720"
 
-cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-# cap = cv2.VideoCapture(url)
+# cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+cap = cv2.VideoCapture(url)
 
-markerTL = 4
-markerTR = 2
-markerBL = 3
-markerBR = 5
+markerTL = 3
+markerTR = 5
+markerBL = 2
+markerBR = 4
 
 # Define the markers and their positions
 marker_ids = [markerTL, markerTR, markerBL, markerBR]
@@ -52,6 +52,7 @@ while cap.isOpened():
 
         # Display the result
         cv2.imshow("Detected Markers in Warped Frame", image)
+        cv2.imshow("Detected Markers", frame)
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break

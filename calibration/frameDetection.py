@@ -16,8 +16,8 @@ aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
 # Create ArUco parameters
 parameters = cv2.aruco.DetectorParameters()
 
-# url = "http://127.0.0.1:5000/video_feed"
-url = "http://192.168.1.105:4747/video?960x720"
+url = "http://127.0.0.1:5000/video_feed"
+# url = "http://192.168.1.105:4747/video?960x720"
 # url = "http://192.168.1.105:4747/video"
 
 # Initialize video capture (use 0 for default camera or provide the video file path)
