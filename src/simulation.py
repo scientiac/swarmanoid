@@ -42,7 +42,7 @@ particleBotY = 200
 speed = 1
 
 # DIMENTIONS
-originalDimention = [40, 40, 300, 300, 20, 50, 80, 15, 15, 15, 15]
+originalDimention = [40, 40, 300, 300, 20, 45, 80, 15, 15, 15, 15]
 scale = 2
 D = [element * scale for element in originalDimention]
 

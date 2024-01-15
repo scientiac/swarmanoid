@@ -8,37 +8,37 @@ import math
 
 from marker_detection import detect_markers, find_nearest_marker_from_bot
 
-url = "http://127.0.0.1:5000/video_feed"  # Replace with your video feed URL
-
-# Boundary IDs
-markerTL = 1
-markerTR = 2
-markerBL = 4
-markerBR = 3
-
-# Define the boundary markers and their positions
-boundary_ids = [markerTL, markerTR, markerBL, markerBR]
-
-# Define the dictionary to use
+# url = "http://127.0.0.1:5000/video_feed"  # Replace with your video feed URL
+#
+# # Boundary IDs
+# markerTL = 1
+# markerTR = 2
+# markerBL = 4
+# markerBR = 3
+#
+# # Define the boundary markers and their positions
+# boundary_ids = [markerTL, markerTR, markerBL, markerBR]
+#
+# # Define the dictionary to use
 aruco_dictionary = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
-
-# Define bot's ID
-bot_id = 69
-red_area = 33
-green_area = 22
-
-# ArUco marker dictionary and parameters
+#
+# # Define bot's ID
+# bot_id = 69
+# red_area = 33
+# green_area = 22
+#
+# # ArUco marker dictionary and parameters
 aruco_params = cv2.aruco.DetectorParameters()
 
 # Define the grid size and marker dimensions
-GRID_SIZE = 500
-MARKER_SIZE = 10
+MARKER_SIZE = 150
 
-marker_positions = detect_markers(url, boundary_ids, aruco_dictionary)
+# marker_positions = detect_markers(url, boundary_ids, aruco_dictionary)
 
-chosen_marker, waste_marker_ids = find_nearest_marker_from_bot(
-    marker_positions, bot_id, boundary_ids, red_area, green_area
-)
+# GRID_SIZE = 1000
+# chosen_marker, waste_marker_ids = find_nearest_marker_from_bot(
+#     marker_positions, bot_id, boundary_ids, red_area, green_area
+# )
 
 # Define obstacle IDs
 # waste_marker_ids = [111, 122, 133, 69, 155, 166, 177, 188, 199, 100]
@@ -53,7 +53,6 @@ def find_path(
     marker_positions,
     chosen_marker,
     waste_marker_ids,
-    aruco_params,
     url,
     bot_id,
 ):
@@ -230,6 +229,7 @@ def find_path(
                     cv2.line(frame, (x1, y1), (x2, y2), (0, 0, 255), thickness=2)
 
             print(path)
+            # return path
 
         # Display the frame
         cv2.imshow("Path Planning", frame)
@@ -243,12 +243,12 @@ def find_path(
     cv2.destroyAllWindows()
 
 
-find_path(
-    GRID_SIZE,
-    marker_positions,
-    chosen_marker,
-    waste_marker_ids,
-    aruco_params,
-    url,
-    bot_id,
-)
+# find_path(
+#     GRID_SIZE,
+#     marker_positions,
+#     chosen_marker,
+#     waste_marker_ids,
+#     aruco_params,
+#     url,
+#     bot_id,
+# )

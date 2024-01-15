@@ -76,3 +76,44 @@ def find_nearest_marker_from_bot(
         and marker_id != bot_id
     ]
     return nearest_marker, obstacle_markers
+
+
+def getMarkerPosition(bot_id, boundary_ids, aruco_dictionary, url):
+    cap = cv2.VideoCapture(url)
+
+    ret, frame = cap.read()
+    parameters = cv2.aruco.DetectorParameters()
+
+    warped_frame, marker_corners_dict = get_warped_frame(frame, boundary_ids, 10)
+
+    # Detect ArUco markers in the frame
+    corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(
+        warped_frame, aruco_dictionary, parameters=parameters
+    )
+
+    if ids is not None and bot_id in ids:
+        index = np.where(ids == bot_id)[0][0]
+        marker_corners = corners[index][0]  # Extract corners of the detected marker
+
+        # Calculate center, left, and right corners
+        center = np.mean(marker_corners, axis=0)
+        left_corner = marker_corners[0]
+        right_corner = marker_corners[1]
+
+        return center, left_corner, right_corner
+
+    # Return None if the marker is not found
+    return None
+
+
+def calculateDistances(current_position, target_position):
+    # Assuming current_position and target_position are tuples (x, y)
+    x_diff = target_position[0] - current_position[0]
+    y_diff = target_position[1] - current_position[1]
+
+    # Assuming your robot has a forward-facing camera
+    center_distance = np.sqrt(x_diff**2 + y_diff**2)
+    right_distance = y_diff
+    left_distance = -y_diff
+
+    return right_distance, left_distance, center_distance
