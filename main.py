@@ -26,6 +26,6 @@ def main():
     else:
         print("Invalid command. Usage: ./main.py [--simulate|-s]")
 
-
+# Main Function
 if __name__ == "__main__":
     main()
