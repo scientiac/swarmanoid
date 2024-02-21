@@ -31,6 +31,7 @@ sudo ./etc/enable-flakes-non-nixos.sh
 
 >To set up micropython and use it refer to [MICROPY.md](MICROPY.md)
 
+## NodeMCU v3 [pins and io](https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/)
 ![Pin Diagram](etc/ESP8266-Node-MCU.png)
 
 | Label | GPIO   | Input         | Output                | Notes                                                           |

@@ -28,5 +28,4 @@ You can also make use of the [webrepl](https://learn.adafruit.com/micropython-ba
 
 To enable the webrepl just `import webrepl_setup` in the serial repl and you're good to go.
 
-## NodeMCU v3 [pins and io](https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/)
 
