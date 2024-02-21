@@ -27,7 +27,10 @@ sudo ./etc/enable-flakes-non-nixos.sh
 
 > using `flake.nix` to add the dependencies and environment variable is highly recommended.
 
->To set up micropython and use it refer to [MICROPY.md][MICROPY.md]
+5. Tip: If you dont want to keep running 'nix develop' every time to enter the environment, set up [nix-direnv](https://github.com/nix-community/nix-direnv) on your system and enable it by running `diren allow` on the base directory of the repo.
+
+>To set up micropython and use it refer to [MICROPY.md](MICROPY.md)
+
 ![Pin Diagram](etc/ESP8266-Node-MCU.png)
 
 | Label | GPIO   | Input         | Output                | Notes                                                           |
