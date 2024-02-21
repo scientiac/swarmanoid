@@ -29,7 +29,7 @@ sudo ./etc/enable-flakes-non-nixos.sh
 
 5. Tip: If you dont want to keep running 'nix develop' every time to enter the environment, set up [nix-direnv](https://github.com/nix-community/nix-direnv) on your system and enable it by running `diren allow` on the base directory of the repo.
 
->To set up micropython and use it refer to [MICROPY.md](MICROPY.md)
+>To set up micropython and use it refer to [MICROPY.md](etc/MICROPY.md)
 
 ## NodeMCU v3 [pins and io](https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/)
 ![Pin Diagram](etc/ESP8266-Node-MCU.png)
